@@ -204,3 +204,90 @@ dados$data_utc <- with_tz(dados$data, tz = "UTC")
 
 print(dados)
 
+
+#Exercícios da data
+#1)
+glimpse(car_crash)
+
+data <- as.Date("2023-08-21")
+ano <- format(data, "%Y")
+mes <- format(data, "%m")
+dia <- format(data, "%d")
+
+datasNovas <- as.Date(car_crash$data)
+datasNovas
+print(datasNovas)  
+
+#2)
+HorarioNovo <- hms(car_crash$horario)
+print(HorarioNovo)
+
+#3)
+
+##Junção de Dados
+require(nycflights13)
+
+#chaves primárias e chaves estrangeiras
+airlines
+airports
+planes
+weather
+
+View(planes)
+#verificação com chaves primárias
+planes %>% 
+  count(tailnum) %>%
+  filter(n > 1)
+
+planes %>%
+  group_by(tailnum) %>%
+  summarise(n = n()) %>%
+  filter(n > 1)
+
+weather %>%
+  count(time_hour, origin) %>%
+  filter(n > 1)
+planes %>%
+  filter(is.na(tailnum))
+
+weather %>% 
+  filter(is.na(time_hour) | is.na(origin))
+
+#Junções Mutacionais
+flights2 <- flights %>% 
+  filter(distance > 2000) %>% 
+  select(year, time_hour, origin, dest, tailnum, carrier)
+flights2
+
+#conjunto da esquerda
+flights2_airlines = 
+  flights2  %>% 
+  left_join(., airlines, 
+            by = "carrier")
+
+#conjunto da direita
+planes_flights = flights2 %>% 
+  right_join(planes, by = "tailnum")
+
+#interseção
+origin_flights = flights2 %>% 
+  inner_join(airports, by = c("origin"= "faa"))
+
+origin_flights = flights2 %>% 
+  inner_join(airports, join_by(origin == faa))
+
+#conjunto dos conjuntos
+dest_flights = flights2 %>% 
+  full_join(airports, by = c("dest"= "faa"))
+
+dest_flights = flights2 %>% 
+  full_join(airports, join_by(dest == faa))
+
+#Junções e Filtragem
+airports %>% 
+  semi_join(flights2, join_by(faa == origin))
+
+flights %>%
+  anti_join(airports, join_by(dest == faa)) %>% 
+  distinct(dest)
+
