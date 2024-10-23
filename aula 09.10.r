@@ -108,4 +108,13 @@ car_crash %>%
   select(all_of(vars_interesse)) %>% 
   glimpse()
 
+car_crash %>% 
+  select(any_of(vars_interesse)) %>% 
+  glimpse()
 
+car_crash %>%
+  select(automovel, bicicleta, onibus)
+
+dados_filtrados <- car_crash %>%
+  filter(automovel >= 3)
+dados_filtrados
