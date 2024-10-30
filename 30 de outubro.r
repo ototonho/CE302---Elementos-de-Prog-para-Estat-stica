@@ -212,3 +212,6 @@ texto <- "Os números 123, 456 e 78 são importantes."
 padrao <- "\\d{2}"
 numeros <- str_extract_all(texto, padrao, simplify = TRUE)
 numeros
+
+
+##estudas joint/junções e pivotagens e summarise e coisinhas
