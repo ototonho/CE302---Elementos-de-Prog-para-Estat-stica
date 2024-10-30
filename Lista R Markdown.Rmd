@@ -1,0 +1,46 @@
+---
+title: "Lista R Markdown"
+output: pdf_document
+date: "2024-10-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+## Lista de Exercícios 01
+
+
+
+# Crie um título de nível 1.
+
+# Escreva um parágrafo de texto normal.
+
+# Destaque uma palavra em itálico.
+
+# Deixe outra palavra em negrito.
+
+# Combine itálico e negrito em uma mesma palavra.
+
+# Crie uma lista não ordenada com três itens.
+
+# Faça uma lista ordenada com quatro itens.
+
+# Crie um link para o site do Google.
+
+# Insira uma imagem que esteja no mesmo diretório que seu arquivo.
+
+# Insira uma imagem da internet.
+
+# Crie um bloco de citação.
+
+
+```
+
+```{r}
+## ctrl + alt + i
+```
+
+
