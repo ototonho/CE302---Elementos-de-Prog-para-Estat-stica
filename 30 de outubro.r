@@ -67,3 +67,4 @@ TB1 %>%
 TB1 %<>% filter(chave %like% "^new") #para ver funções com essa variável
 View(TB1)
 
+

@@ -119,4 +119,4 @@ dados_filtrados <- car_crash %>%
   filter(automovel >= 3)
 dados_filtrados
 
-qqr coisa
+##qqr coisa
