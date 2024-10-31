@@ -45,7 +45,7 @@ Seções de tarefas divididas em uma lista aninhada:
 | Oskar  | Desconhecida | Narrador e malandrão |
 | Agnes  | 30           | Lojista              |
 | Alfred | 40           | Lojista              |
-| Jan    | 30\~40       | Livreiro             |
+| Jan    | 30 ~ 40     | Livreiro             |
 
 -   Para fazer a lista pedida originalmente:
 
@@ -67,3 +67,31 @@ soma_aleatória <- 2+3+58
 O resultado da soma aleatória é: `r soma_aleatória`.
 
 ## Outras Funcionalidades
+
+Tentando criar uma nota de rodapé Nota de rodapé [^1]
+
+[^1]: 1 Deu certo? Aparentemente sim.
+
+Agora, uma tentativa de criar listas de tarefas [^2]:
+
+[^2]: 1 Deu certo? Aparentemente sim.
+
+-   [ ] Comprar pão
+-   [ ] Correr
+-   [ ] Resolver as listas de exercícios
+
+Citação eu já tinha feito, mas aqui vai mais uma do Günter Grass: \> Es war einmal ein Hund, der gehörte dem Führer und Reichskanzler und war dessen Lieblingshund. *(Grass, Günter, Hundejahre, pg. 461)*
+
+```{r}
+library(ggplot2)
+data(mpg)
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  labs(title = "Gráfico de Dispersão: Cilindrada vs. Consumo",
+       x = "Cilindrada (litros)",
+       y = "Consumo na estrada (milhas por galão)")
+```
+
+[Dua Lipa: Tiny Desk Concert](https://www.youtube.com/watch?v=y38qQRg3UDI)
+
+
