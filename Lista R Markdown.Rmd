@@ -1,46 +1,69 @@
 ---
-title: "Lista R Markdown"
-output: pdf_document
-date: "2024-10-30"
+title: "Lista de Markdown"
+output: html_document
+date: "2024-10-31"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Título de nível 1 - Parágrafo sobre Günter Grass {#sec-01}
 
-## R Markdown
+Quando **Günter Grass** cria a personagem de *Oskar Matzerath*, ele tem a intenção de, a partir de uma figura ambígua e pícara, dissecar a sociedade prussiana/alemã em vias de presenciar a ascensão do ***Partido Nazista***.
+
+Os grandes livros de Günter Grass são:
+
+-   O Tambor
+-   Anos de Cão
+-   Gato e Rato
+
+Na minha ordem de preferência:
+
+1.  O Tambor
+2.  Anos de Cão
+3.  Gato e Rato
+
+Para mais informações, é recomendado que você faça uma pesquisa no [Google.com](google.com)
+
+Para você reconhecer o rosto de Günter Gras: ![O jovem-velho Günter Grass](https://www.ndr.de/kultur/buch/grasssechzigerjahre2_v-contentgross.jpg)
+
+![Günter Grass](C:/Users/anton/Desktop/Área%20de%20Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Günter_Grass_auf_dem_Blauen_Sofa)
+
+Citação:
+
+> **Das immerhin leistet die Literatur: Sie schaut nicht weg, sie vergißt nicht, sie bricht das Schweigen.** *É isso que a literatura faz todavia: ela não desvia o olhar, não se esquece, ela rompe o silêncio.* Günter Grass sobre a literatura em entrevista à revista 'Der Spiegel' (tradução livre feita por mim).
+
+## Seção 2 - Personagens de 'O Tambor' {#sec-02}
+
+------------------------------------------------------------------------
+
+Seções de tarefas divididas em uma lista aninhada:
+
+-   Agora vamos falar sobre outros temas, caso queira retornar à seção sobre o autor Günter Grass, [clique aqui](#sec-01)
+
+    -   Sobre as personagens do romance "O Tambor", podemos listar as principais logo abaixo:
+
+| Nome   | Idade        | Profissão            |
+|--------|--------------|----------------------|
+| Oskar  | Desconhecida | Narrador e malandrão |
+| Agnes  | 30           | Lojista              |
+| Alfred | 40           | Lojista              |
+| Jan    | 30\~40       | Livreiro             |
+
+-   Para fazer a lista pedida originalmente:
+
+| Itens    | Quantidade |
+|----------|------------|
+| Maçãs    | 5          |
+| Bananas  | 3          |
+| Laranjas | 8          |
+
+------------------------------------------------------------------------
+
+## Bloco de código em R seguida do código inline
+
 ```{r}
-## Lista de Exercícios 01
-
-
-
-# Crie um título de nível 1.
-
-# Escreva um parágrafo de texto normal.
-
-# Destaque uma palavra em itálico.
-
-# Deixe outra palavra em negrito.
-
-# Combine itálico e negrito em uma mesma palavra.
-
-# Crie uma lista não ordenada com três itens.
-
-# Faça uma lista ordenada com quatro itens.
-
-# Crie um link para o site do Google.
-
-# Insira uma imagem que esteja no mesmo diretório que seu arquivo.
-
-# Insira uma imagem da internet.
-
-# Crie um bloco de citação.
-
+soma_aleatória <- 2+3+58
 
 ```
 
-```{r}
-## ctrl + alt + i
-```
+O resultado da soma aleatória é: `r soma_aleatória`.
 
-
+## Outras Funcionalidades
