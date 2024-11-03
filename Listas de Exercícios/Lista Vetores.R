@@ -63,3 +63,32 @@ salarios <- c(2000, 3000, 1500, 4000)
 names(salarios) <- c("João", "Maria", "Carlos", "Ana")
 names(salarios)
 salarios["Maria"]
+salarios["Carlos"] <- 1800
+salarios
+salarios["Paulo"] <- 2500 #adicionou Paulo
+salarios
+salarios <- salarios[names(salarios) != "Ana"] #removeu Ana
+salarios
+sort(salarios)
+notasN <- c(8, 7, 9)
+names(notasN) <- c("Pedro", "Lucas", "Carla")
+notasN
+notasN["Pedro", "Carla"]
+notasS <- notasN[c("Pedro", "Carla")]
+notasS
+mean(notasN)
+
+#Manipulação de Strings
+StringE <- c("Análise de Dados")
+substr(StringE, 1, 5)
+StringE2 <- c("R é uma linguagem de programação")
+toupper(StringE2)
+tolower(StringE2)
+StringE2N <- sub("linguagem", "software", StringE2)
+print(StringE2N)
+
+##Expressões Regulares
+Text <- ("Texto123")
+dígitos <- gregexpr("[0-9]", Text)
+dígitos_encontrados <- regmatches(Text, dígitos)
+print(dígitos_encontrados)
