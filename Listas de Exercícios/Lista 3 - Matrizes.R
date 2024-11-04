@@ -144,3 +144,64 @@ df$cor_preferida <- cor_preferida
 df
 
 #7)
+endereco <- list(
+  list(rua = "A", cidade = "Ravena", pais = "Itália"),
+  list(rua = "B", cidade = "Constantinopla", pais = "Grécia"),
+  list(rua = "C", cidade = "Orestias", pais = "Trácia"),
+  list(rua = "D", cidade = "Roma", pais = "Itália")
+)
+df$endereco <- endereco
+df
+
+#8)
+df$endereco[[1]]$rua
+
+#9)
+df_salario_alto <- subset(df, salarios > 3000)
+df_salario_alto
+
+#10)
+df[order(df$nomes), ]
+
+## Manipulação de Fatores
+#1) 
+escolaridade <- factor(c("fundamental", "médio", "superior", "médio", "fundamental", "fundamental", "médio", "superior", "médio", "fundamental"))
+escolaridade
+as.character(escolaridade)
+
+#3)
+V_idades <- factor(c(4,5,6,14,15,16,21,25,27,28,30,33,35,41,43,51,55,57,60,61,78))
+NV_idades <- as.numeric(levels(V_idades))[V_idades]
+faixa_etaria <- cut(NV_idades, breaks = c(0, 12, 18, 27, 60, 100),
+                    labels = c("criança", "adolescente", "jovem adulto", "adulto", "idoso"),
+                    right = FALSE)
+print(faixa_etaria)
+faixa_etaria
+levels(faixa_etaria)
+summary(faixa_etaria)
+
+#4)
+faixa_etariaA <- factor(faixa_etaria, levels = c("adolescente", "adulto", "criança", "idoso", "jovem adulto"))
+sort(faixa_etariaA)
+print(faixa_etariaA)
+
+#5)
+table(faixa_etaria)
+
+## Concatenação de fatores com Strings
+#1)
+cidades <- c("Astana", "Ljubliana", "Nagoya", "Sarajevo", "La Paz")
+
+#2)
+cidades_F <- as.factor(cidades)
+
+#3)
+paises <- c("Cazaquistão", "Eslovênia", "Japão", "Bósnia", "Bolívia")
+
+#4)
+concatenado <- paste(cidades, paises, sep = ", ")
+concatenado
+
+#5)
+as.character(concatenado)
+class(concatenado)
