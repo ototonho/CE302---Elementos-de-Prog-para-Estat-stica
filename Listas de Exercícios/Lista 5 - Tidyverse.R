@@ -69,3 +69,36 @@ L_e_B_naC <- chocolate %>%
 View(L_e_B_naC)
 
 ## Artistas do MoMA
+Nome_do_arquivo <- "Dados/Art_Moma.csv.gz"
+temp_dir <- tempdir()
+unzip("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Listas de Exercícios/Dados.zip", 
+      files = Nome_do_arquivo, exdir = temp_dir)
+caminho_para_Gzip <- file.path(temp_dir, Nome_do_arquivo)
+Art_Moma <- read_csv(gzfile(caminho_para_Gzip))
+print(Art_Moma)
+
+Nome_do_arquivo <- "Dados/Art.csv.gz"
+temp_dir <- tempdir()
+unzip("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Listas de Exercícios/Dados.zip", 
+      files = Nome_do_arquivo, exdir = temp_dir)
+caminho_para_Gzip <- file.path(temp_dir, Nome_do_arquivo)
+Art <- read_csv(gzfile(caminho_para_Gzip))
+print(Art)
+
+dados_unidos <- left_join(Art, Art_Moma, by = "artist_unique_id")
+View(dados_unidos)
+
+#a) média MoMMA e Whitney
+Média_Whitney <- dados_unidos %>%
+  group_by(year) %>%
+  summarise(total_de_expos = sum(whitney_count_to_year, na.rm = TRUE), .groups = "drop") %>%
+  summarise(Média_Whitney = mean(total_de_expos))
+print(Média_Whitney)
+
+Média_Moma <- dados_unidos %>%
+  group_by(year) %>%
+  summarise(total_de_expos = sum(moma_count_to_year, na.rm = TRUE), .groups = "drop") %>%
+  summarise(Média_Moma = mean(total_de_expos))
+print(Média_Moma)
+
+#b) 
