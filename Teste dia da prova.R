@@ -63,3 +63,8 @@ dia
 data
 ano
 mes
+
+##aredondamento 
+ceiling() #p cima
+floor() #p baixo
+round() #mais próx
