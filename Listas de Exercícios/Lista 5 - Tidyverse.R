@@ -127,4 +127,61 @@ top4_artistas_MoMA <- dados_unidos %>%
 
 View(top4_artistas_MoMA)
 
-#d) 
+#d) artistas homens e mulheres
+gender_count <- dados_unidos %>%
+  distinct(artist_unique_id, artist_gender) %>%
+  group_by(artist_gender) %>%
+  summarise(gender_count = n(), .groups = "drop")
+print(gender_count)
+
+#e) cinco nacionalidades mais frequentes
+nat_count <- dados_unidos %>%
+  distinct(artist_unique_id, artist_nationality) %>%
+  group_by(artist_nationality) %>%
+  summarise(total_artists =n(), .groups = "drop") %>%
+  arrange(desc(total_artists)) %>%
+  slice_head(n = 5)
+print(nat_count)
+
+#f) quantos de cada museu aparecem em cada livro
+artists_per_book <- dados_unidos %>%
+  filter(moma_count_to_year > 0 | whitney_count_to_year > 0) %>%
+  mutate(museu = case_when(moma_count_to_year > 0 & whitney_count_to_year > 0 ~ "both",
+                           moma_count_to_year > 0 ~ "MoMA",
+                           whitney_count_to_year > 0 ~ "Whitney")) %>%
+  distinct(artist_unique_id, book, museu) %>%
+  group_by(book, museu) %>%
+  summarise(total_artists = n(), .groups = "drop")
+print(artists_per_book)
+
+#g) média de espaço por artista nas páginas
+space_ratio_mean <- dados_unidos %>%
+  group_by(artist_unique_id) %>%
+  summarise(space_ratio_per_page_total = mean(space_ratio_per_page_total, na.rm = TRUE), .groups = "drop")
+
+print(space_ratio_mean)
+
+## Refugiados
+Nome_do_arquivo <- "Dados/refugiados.csv.gz"
+temp_dir <- tempdir()
+unzip("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Listas de Exercícios/Dados.zip", 
+      files = Nome_do_arquivo, exdir = temp_dir)
+caminho_para_Gzip <- file.path(temp_dir, Nome_do_arquivo)
+refugiados <- read_csv(gzfile(caminho_para_Gzip))
+print(refugiados)
+
+Nome_do_arquivo <- "Dados/refugiados_pais.csv.gz"
+temp_dir <- tempdir()
+unzip("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Listas de Exercícios/Dados.zip", 
+      files = Nome_do_arquivo, exdir = temp_dir)
+caminho_para_Gzip <- file.path(temp_dir, Nome_do_arquivo)
+refugiados_pais <- read_csv(gzfile(caminho_para_Gzip))
+print(refugiados_pais)
+
+refugiados_novo <- refugiados %>%
+  left_join(refugiados_pais, by = c("id_origem" = "id"))
+
+refugiados_juntos <- refugiados_novo %>%
+  left_join(refugiados_pais, by = c("id_origem" = "id"), suffix = c("id_origem", "id_destino"))
+
+View(refugiados_juntos)
