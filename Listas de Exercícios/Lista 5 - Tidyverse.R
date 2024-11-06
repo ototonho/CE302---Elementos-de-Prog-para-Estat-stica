@@ -101,4 +101,30 @@ Média_Moma <- dados_unidos %>%
   summarise(Média_Moma = mean(total_de_expos))
 print(Média_Moma)
 
-#b) 
+#b) Média MoMMA e Whitney por anor para artistas não brancos
+Média_Whitney_Non_White <- dados_unidos %>%
+  filter(artist_race_nwi == "Non-White") %>%
+  group_by(year) %>%
+  summarise(total_de_expos = sum(whitney_count_to_year, na.rm = TRUE), .groups = "drop") %>%
+  summarise(Média_Whitney_Non_White = mean(total_de_expos))
+
+print(Média_Whitney_Non_White)
+
+Média_Moma_Non_White <- dados_unidos %>%
+  filter(artist_race_nwi == "Non-White") %>%
+  group_by(year) %>%
+  summarise(total_de_expos = sum(moma_count_to_year, na.rm = TRUE), .groups = "drop") %>%
+  summarise(Média_Moma_Non_White = mean(total_de_expos))
+
+print(Média_Moma_Non_White)
+
+#c)4 artistas com mais exposições no MoMA 
+top4_artistas_MoMA <- dados_unidos %>%
+  group_by(artist_name) %>%
+  summarise(total_de_expos = sum(moma_count_to_year, na.rm = TRUE), .groups = "drop") %>%
+  arrange(desc(total_de_expos)) %>%
+  slice_head(n = 4)
+
+View(top4_artistas_MoMA)
+
+#d) 
