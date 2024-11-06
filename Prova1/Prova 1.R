@@ -1,4 +1,6 @@
 ### Prova 1
+#Antonio Paulo Steffen Neto / GRR20240436
+
 library(tidyverse)
 #1) 
 DF1 <-data.frame(
