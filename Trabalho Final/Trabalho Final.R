@@ -7,35 +7,66 @@ head(Cogus)
 Cogus
 glimpse(Cogus)
 
-#Stem Height X Stem Width X Diameter
-dados_agregados <- Cogus %>%
-  group_by(class, cap.color) %>%
-  summarize(count = n(), média_diametro = mean(cap.diameter, na.rm = TRUE))
-View(dados_agregados)
-
+#agrupando e criando amostra
 amostra_Cogus <- Cogus %>% sample_n(15000)
+View(amostra_Cogus)
 
-g1 <- ggplot(amostra_Cogus, aes(x = stem.height, y = stem.width, size = cap.diameter)) +
-  geom_point(col = "#ef9a9a", alpha = 0.2) +
-  scale_size_continuous(range = c(2,10)) +
+amostra_veneno <- Cogus %>% sample_n(20000)
+View(cor_veneno)
+#Veneno x Não-veneno
+cor_veneno <- amostra_veneno %>%
+  group_by(class, cap.color) %>%
+  summarize(count = n(), .groups = "drop") %>%
+  mutate(proportions = count/ sum(count))
+g1 <- ggplot(cor_veneno, aes(x = cap.color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(
+    title = "Proporção de cogumelos venenosos por cor",
+    x = "Cor",
+    y = "Proporção",
+    fill = "Class"
+  ) +
+  scale_fill_manual(values = c("p" = "#6a1b9a", "e" = "#ce93d8")) +
   theme_minimal()
+
+g2 <- ggplot(cor_veneno, aes(x = cap.color, y = class, fill = count)) +
+  geom_tile() +
+  scale_fill_gradient(low = "#e1bee7", high = "#7b1fa2") +
+  labs(
+    title = "Mapa de calor de venenosidade por cor",
+    x = "Cor",
+    y = "Venenoso ou não",
+    fill = "Proporção"
+  ) +
+  theme_minimal()
+
+tabela_de_veneno <- table(Cogus$cap.color, Cogus$class)
+chisq.test(tabela_de_veneno)
+
+g3 <- ggplot(amostra_veneno, aes(x = stem.height, y = stem.width, color = class)) +
+  geom_point(alpha = 0.7) +
+  labs(
+    title = "Tamanho e altura do caule por classe",
+    x = "Altura",
+    y = "Largura",
+    color = "Classe"
+  ) +
+scale_color_manual(values = c("p" = "#6a1b9a", "e" = "#ce93d8")) +
+  theme_minimal()
+
+g4 <- ggplot(amostra_veneno, aes(x = class, y = cap.diameter, fill = class)) +
+  geom_violin() +
+  facet_wrap(~ habitat) +
+  labs(
+    title = "Distribuição do diamêtro do píleo por classe e habitat",
+    x = "Classe",
+    y = "Diâmetro do Píleo",
+    fill = "Classe"
+  ) +
+  scale_fill_manual(values = c("p" = "#7b1fa2", "e" = "#e1bee7")) +
+  theme_minimal()
+
 g1
-
-
-#Shape x Diameter
-g2 <- ggplot(amostra_Cogus, aes(x = cap.diameter, y = cap.shape)) +
-  geom_point() +
-  theme_minimal()
-g2  
-
-#Poison x Color x Diâmetro
-g3 <- ggplot(amostra_Cogus, aes(x = class, y = cap.color)) +
-  geom_violin()
+g2
 g3
-
-##Densidade Cor
-g4 <- ggplot(amostra_Cogus, aes(x = cap.color)) +
-  geom_bar() 
 g4
-
-#Diameter X Habitat
