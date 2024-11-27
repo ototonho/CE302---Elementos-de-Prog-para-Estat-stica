@@ -246,3 +246,4 @@ dev.off()
 
 ###esquisse - ele gera o código
 ##Addins -> esquisse -> ggplot
+
