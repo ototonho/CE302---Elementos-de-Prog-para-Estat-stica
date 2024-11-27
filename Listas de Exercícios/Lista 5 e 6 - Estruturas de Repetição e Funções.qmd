@@ -1,0 +1,183 @@
+---
+title: "Exercícios de Estruturas de Repetição e Funções"
+format: pdf
+editor: visual
+---
+
+## Estruturas de Repetição e Funções
+
+**Questão 1** Dado o conjunto de números naturais entre 1 e 500.000, resolva as questões a seguir:
+
+*1. Quantos números primos existem neste intervalo?*
+
+Dica: Crie uma função chamada contar_primos(limite) que receba um número limite (neste caso, 500.000) e retorne a quantidade de números primos encontrados.
+
+```{r}
+primo <- function(n) {
+  if (n <= 1) return(FALSE)
+  if (n == 2) return(TRUE)
+  if (n %% 2 == 0) return(FALSE)
+  
+
+  for (i in seq(3, floor(sqrt(n)), by = 2)) {
+    if (n %% i == 0) return(FALSE)
+  }
+  
+  return(TRUE)
+}
+
+contar_primos <- function(i){
+  conta_primos <- 0
+  for (n in i:500000) {
+    if (primo(n)) {
+      conta_primos <- conta_primos + 1
+    }
+  }
+  return(conta_primos)
+}
+
+i <- 50
+contar_primos(i)
+```
+
+*2. Quantos números pertencem à sequência ( S_i ), definida por*:
+
+[ S_i = i + frac{i^2}{2}]
+
+Condição: Considere apenas os números de ( S_i ) no intervalo \[1, 500.000\]. **Dica: Implemente uma função chamada calcular_sequencia(limite) que retorne os números ( S_i ) que atendem à condição.**
+
+```{r}
+calcular_sequencia <- function(limite) {
+  sequencia <- c()
+  for (i in 1:limite) {
+    S_i <- i + (i^2) / 2
+    if (S_i >= 1 && S_i <= 500000) {
+      sequencia <- c(sequencia, S_i)
+    }
+  }
+  return(sequencia)
+}
+
+limite <- 500000
+calcular_sequencia(limite)
+length(calcular_sequencia(limite))
+```
+
+**Questão 2**
+
+Faça um programa que calcule o novo salário de um funcionário com base no código de seu cargo, de acordo com a tabela abaixo:
+
+| Código | Cargo           | Aumento |
+|--------|-----------------|---------|
+| 1      | Estagiário      | 10%     |
+| 2      | Analista Jr     | 20%     |
+| 3      | Analista Pleno  | 22%     |
+| 4      | Analista Senior | 25%     |
+| 5      | Especialista    | 28%     |
+
+1. Implemente uma função chamada calcular_aumento(codigo, salario) que receba o código do cargo e o salário atual, e retorne o valor do aumento e o novo salário.
+
+```{r}
+calcular_aumento <- function(codigo, salario){
+  percentual <- 0
+  if(codigo == 1){
+    percentual <- 0.10
+  }
+  else if(codigo == 2){
+    percentual <- 0.20
+  }
+  else if(codigo == 3){
+    percentual <- 0.22
+  }
+  else if(codigo == 4){
+    percentual <- 0.25
+  }
+  else if(codigo == 5){
+    percentual <- 0.28
+  } else {
+    stop("Código inválido")
+  }
+  aumento <- salario * percentual
+  novo_salario <- salario + aumento
+  return(list(aumento = aumento, novo_salario = novo_salario))
+}
+codigo <- as.numeric(readline(prompt = "Digite o código do cargo (1 a 5): "))
+salario <- as.numeric(readline(prompt = "Digite o salário atual: "))
+
+Analista_P <- calcular_aumento(codigo, salario)
+cat("Aumento: R$", Analista_P$aumento, "\n")
+cat("Novo salário: R$", Analista_P$novo_salario, "\n")
+```
+
+2. Aplique a função sobre uma lista de funcionários com diferentes cargos e salários, e exiba os resultados.
+
+```{r}
+funcionarios <- data.frame(
+  Nome = c("Melissa", "Alice", "Cecília", "Anderson", "Rubão", "Odoacro"),
+  Codigo_Cargo = c(1, 2, 3, 3, 4, 5),
+  Salario_atual = c(1200, 2500, 3300, 3500, 4500, 6000)
+)
+
+resultado <- apply(funcionarios, 1, function(row){
+  calculo <- calcular_aumento(as.numeric(row["Codigo_Cargo"]), as.numeric(row["Salario_atual"]))
+  c(Aumento = calculo$aumento, Novo_Salario = calculo$novo_salario)
+})
+
+resultado <- t(resultado)
+colnames(resultado) <- c("Aumento", "Novo_Salario")
+funcionarios <- cbind(funcionarios, resultado)
+```
+
+**Questão 3**
+
+Um indivíduo possui três meios de transporte e escolhe o mais apropriado com base nas condições abaixo:
+
+1.  Escolha do meio de transporte com base na distância:
+
+-   Mais de 500 km: Avião.
+-   Entre 50 e 500 km: Carro.
+-   Menos de 50 km: Bicicleta.
+
+2.  Escolha do combustível quando usa o carro:
+
+-   Etanol: até 75% do preço da gasolina.
+-   GNV: até 60% do preço da gasolina.
+-   Caso contrário: Gasolina.
+
+**Implemente as seguintes funções**:
+
+*1. escolher_transporte(distancia)* - Retorna o meio de transporte ideal com base na distância.
+
+```{r}
+escolher_transporte <- function(distancia){
+  veiculo <- NULL
+  
+  if (distancia <= 50) {
+    veiculo <- "bicicleta"
+  } else if (distancia > 50 & distancia <= 500) {
+    veiculo <- "carro"
+  } else if (distancia > 500) {
+    veiculo <- "avião"
+  } else {
+    stop("Digite novamente uma distância válida.")
+  }
+  
+   return(paste("O meio de transporte ideal é:", veiculo))
+}
+distancia <- as.numeric(readline(prompt = "Digite a distância (em km): "))
+
+resultado <- escolher_transporte(distancia)
+print(resultado)
+```
+
+
+*2. escolher_combustivel(preco_gasolina, preco_etanol, preco_gnv)* - Retorna o combustível ideal baseado nos preços atuais.
+
+3.  Utilize as funções para responder:
+
+-   Qual transporte e combustível o indivíduo deve escolher para ir:
+    -   A Florianópolis (750 km).
+    -   A Natal (3.000 km).
+    -   A Araucária (25 km).
+
+
