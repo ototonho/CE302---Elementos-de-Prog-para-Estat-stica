@@ -1,13 +1,9 @@
-install.packages("vegan")
-install.packages("networkD3")
-install.packages("fmsb")
 library(vegan)
 library(tidyverse)
 library(gridExtra)
 library(grid)
 require(data.table)
 library(networkD3)
-library(fmsb)
 
 df <- read.csv("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Trabalho Final/one_million_mushrooms.csv/one_million_mushrooms.csv", sep = ";")
 
@@ -18,7 +14,7 @@ Cogus
 glimpse(Cogus)
 
 ##alterando a tabela
-df <- df %>%
+df <- Cogus %>%
   mutate(
     class = case_when(
       class == "e" ~ "edible",
@@ -244,96 +240,46 @@ g2
 ##Proporção das cores por classes com relação ao n total 
 ##não gostei
 
-g3 <- ggplot(cor_veneno, aes(x = cap.color, y = count, fill = class)) +
-  geom_point(size = 4, alpha = 0.7) +
-  geom_line(aes(group = class), linetype = "dotted") +
+g3 <- ggplot(cor_veneno, aes(x = class, y = cap.color, fill = proportions)) +
+  geom_tile() +
+  scale_fill_gradient(low = "#d1c4e9", high = "#512da8") +
   labs(
-    title = "Frequência de cores por classe",
-    x = "Cores",
-    y = "Frequência",
-    fill = "Classe"
+    title = "Proporção de cores por classe",
+    x = "Classe",
+    y = "Cor",
+    fill = "Proporção"
   ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme_minimal()
 g3
 
-cor_veneno <- amostra_veneno %>%
-  group_by(class, cap.color) %>%
-  summarize(count = n(), .groups = "drop") %>%
-  mutate(proportions = count/ sum(count))
+proporção_cores <- cor_veneno %>%
+  group_by(cap.color) %>%
+  mutate(diff = max(proportions) - min(proportions),
+         dominant_class = ifelse(
+           proportions[class == "poisonous"] > proportions[class == "edible"],
+           "poisonous",
+           "edible"
+         )) %>%
+  arrange(desc(diff)) %>%
+  ungroup()
 
-edible_data <- cor_veneno %>%
-  filter(class == "edible")
-poisonous_data <- cor_veneno %>%
-  filter(class == "poisonous")
+##Diferença de proporção por cor e classe
+##Se olhar para o g3, o gráfico agora coloca numa escala de cores as diferenças entre classes
 
-edible_plot <- ggplot(edible_data, aes(x = cap.color, y = count, group = 1)) +
-  geom_polygon(fill = "lightgreen", alpha = 0.5, color = "darkgreen") +
-  geom_point(size = 2, color = "darkgreen") +
-  coord_polar() +
-  labs(title = "Radar Chart: Edible Mushrooms", y = "Proportion", x = "") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
-edible_plot
+g4 <- ggplot(proporção_cores, aes(x = class, y = cap.color, fill = diff)) +
+  geom_tile(aes(fill = diff)) +
+  scale_fill_gradientn(
+    colours = c("#a1887f", "#4e342e", "lightcoral", "darkred"),
+    values = scales::rescale(c(0, 1)),
+    guide = guide_colourbar(title = "Diferença")
+  ) +
+  facet_wrap(~dominant_class, nrow = 1) +
+  labs(
+    title = "Diferença de proporção por cor e classe",
+    x = "Classe",
+    y = "Cor",
+    fill = "Diferença"
+  ) +
+  theme_minimal()
 
-
-poisonous_plot <- ggplot(poisonous_data, aes(x = cap.color, y = count, group = 1)) +
-  geom_polygon(fill = "lightcoral", alpha = 0.5, color = "darkred") +
-  geom_point(size = 2, color = "darkred") +
-  coord_polar() +
-  labs(title = "Radar Chart: Poisonous Mushrooms", y = "Proportion", x = "") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
-poisonous_plot
-
-reshape_data <- function(class) {
-  class %>%
-    select(class, cap.color, proportions) %>%
-    pivot_wider(names_from = cap.color, values_from = proportions) %>%
-    as.data.frame()
-}
-radar_edible <- reshape_data(edible_data)
-radar_poisonous <- reshape_data(poisonous_data)
-
-add_max_min_rows <- function(radar_data) {
-  radar_data <- radar_data[, -1]  # Remove the 'class' column
-  radar_data <- rbind(rep(0.21, ncol(radar_data)),  # Max values
-                      rep(0, ncol(radar_data)),  # Min values
-                      radar_data)
-  return(radar_data)
-}
-radar_edible <- add_max_min_rows(radar_edible)
-radar_poisonous <- add_max_min_rows(radar_poisonous)
-dev.off()
-
-radarchart(radar_edible)
-title(main = "Radar Chart for Edible")
-
-radarchart(radar_poisonous)
-title(main = "Radar Chart for Poisonous")
-
-
-radarchart(radar_edible,
-           axistype = 1,               # Type of axis labels (1 = radial)
-           pcol = rgb(0.2, 0.5, 0.5, 0.7),  # Color of the plot area
-           pfcol = rgb(0.2, 0.5, 0.5, 0.3),  # Fill color for the plot area
-           plwd = 4,                   # Line width for the plot
-           cglcol = "gray",            # Color of the grid lines
-           cglty = 1,                  # Style of the grid lines
-           axislabcol = "blue",        # Axis label color
-           caxislabels = seq(0, 1, by = 0.2), # Adjust axis labels
-           cglwd = 0.8,                # Grid line thickness
-           vlcex = 0.8,                # Label font size
-           maxmin = TRUE) 
-
-
-dev.off()
-radarchart(radar_edible)
-title(main = "Radar Chart for Edible")
-
-radarchart(radar_poisonous)
-title(main = "Radar Chart for Poisonous")
-
-
-##fazer o mesmo com ambos mas retirando brown
-
+g4
