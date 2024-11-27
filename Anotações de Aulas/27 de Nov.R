@@ -247,3 +247,84 @@ dev.off()
 ###esquisse - ele gera o código
 ##Addins -> esquisse -> ggplot
 
+##Mais de um gráfico ao mesmo tempo
+require(patchwork)
+
+p1 = 
+  Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  mutate(nome = ifelse(`gross(in $)` > quantile(`gross(in $)`, 0.95, na.rm = T), movie_name, NA)) %>% 
+  mutate(col = ifelse(!is.na(nome), "Importante", "Não Importante")) %>%
+  ggplot() +
+  aes(x = year, 
+      y = rating, 
+      label = nome, 
+      color = col)+
+  geom_point() +
+  geom_text_repel(box.padding = 0.5, 
+                  max.overlaps = 1000, 
+                  nudge_x = .15,
+                  nudge_y = 1,
+                  segment.curvature = -0.1,
+                  segment.ncp = 3,
+                  segment.angle = 20
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p2 = Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  ggplot() +
+  aes(group = year, 
+      y = rating, 
+  )+
+  geom_boxplot() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p3 = Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  group_by(year) %>% 
+  summarise(rate = mean(rating, na.rm = TRUE)) %>% 
+  ggplot()+
+  aes(x = year, 
+      y = rate) + 
+  geom_line() +
+  geom_point() +
+  theme_minimal()
+
+p1 / p2
+
+##Comunicação - PARTE 8
+
+#alterando dados do documento
+#---
+#  title: "Seu Título Aqui"
+#subtitle: "Seu Subtítulo Aqui"
+#author: "Seu Nome aqui"
+#date: 10/10/2023
+#date-format: long # date-format: dddd MMM D, YYYY   
+#lang: pt
+#---
+  
+#Temas do código
+#title: "Seu Título Aqui"
+#subtitle: "Seu Subtítulo Aqui"
+#author: "Seu Nome aqui"
+#date: 10/10/2023
+#date-format: long # date-format: dddd MMM D, YYYY   
+#lang: pt
+#theme: 
+#  light: yeti
+#dark: slate
+#format: 
+#  pdf: 
+#  highlight-style: dracula
+#html:
+#  highlight-style: solarized
+#docx: default
+
+##Utilizar o pacote shinyextra e tbm o shinyui
+##E também o ShinyUiEditor
+
+

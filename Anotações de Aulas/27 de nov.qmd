@@ -1,6 +1,6 @@
 ---
 title: "Aula 27 de novembro"
-format: pdf
+format: html
 editor: visual
 ---
 
@@ -24,7 +24,7 @@ for (i in 1:length(files)) {
 }
 ```
 
-Unindo as tabelas
+**Unindo as tabelas**
 
 ```{r}
 Files[[1]]$movie_id
@@ -47,7 +47,7 @@ Files %>% # Carregar o banco
   theme_minimal() # Fazer o scatterplot
 ```
 
-Gráfico de Dispersão facetado
+**Gráfico de Dispersão facetado**
 
 ```{r}
 #Facetar
@@ -63,7 +63,7 @@ Files %>%
   theme_minimal()
 ```
 
-Gráfico filtrado
+**Gráfico filtrado**
 
 ```{r}
 Files %>% 
@@ -85,7 +85,7 @@ Files %>%
         text = element_text(size = 14))
 ```
 
-Para linhas de tendência
+**Para linhas de tendência**
 
 ```{r}
 Files %>% 
@@ -108,7 +108,7 @@ Files %>%
         text = element_text(size = 14))
 ```
 
-Para gráficos em linhas
+**Para gráficos em linhas**
 
 ```{r}
 Files %>% 
@@ -124,7 +124,7 @@ Files %>%
   theme_minimal()
 ```
 
-Para gasto médio e coisas de trabalho com legenda
+**Para gasto médio e coisas de trabalho com legenda**
 
 ```{r}
 Files %>% 
@@ -146,7 +146,7 @@ Files %>%
                             face = "bold")) # tamanho da fonte
 ```
 
-Gráfico de barras com geom_col
+**Gráfico de barras com geom_col**
 
 ```{r}
 Files %>% 
@@ -168,7 +168,7 @@ Files %>%
   theme(legend.position = "none")
 ```
 
-Para cada categoria ter sua própria escala por ano - e inverteu a coordenada
+**Para cada categoria ter sua própria escala por ano** - e inverteu a coordenada
 
 ```{r}
 Files %>% 
@@ -204,7 +204,7 @@ Files %>%
         text = element_text(size = 18))
 ```
 
-Histograma
+**Histograma**
 
 ```{r}
 ggplot(Files) +
@@ -214,7 +214,7 @@ ggplot(Files) +
 
 ```
 
-Densidade
+**Densidade**
 
 ```{r}
 ggplot(Files) +
@@ -232,7 +232,7 @@ ggplot(Files) +
   theme(legend.position = "none")
 ```
 
-Boxplot
+**Boxplot**
 
 ```{r}
 ggplot(Files) +
@@ -256,7 +256,7 @@ ggplot(Files) +
   theme(legend.position = "none")
 ```
 
-Violino
+**Violino**
 
 ```{r}
 ggplot(Files) +
@@ -274,7 +274,7 @@ ggplot(Files) +
   theme(legend.position = "none")
 ```
 
-Gráfico de Contorno
+**Gráfico de Contorno**
 
 ```{r}
 Files %>%
@@ -293,7 +293,7 @@ Files %>%
   facet_wrap(vars(tipo), scales = "free")
 ```
 
-Salvar imagem
+**Salvar imagem**
 
 ```{r}
 #Salvar imagem
@@ -307,9 +307,142 @@ dev.off()
 ```
 
 **Esquisse** 
-- Ele gera o código!!!
- + Copiar código ali na área de colar no console.
+- Ele gera o código!!! 
+  + Copiar código ali na área de colar no console.
+
 ```{r}
 ##Addins -> esquisse -> ggplot
 ```
+
+Layouts
+```{r}
+require(patchwork)
+
+p1 = 
+  Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  mutate(nome = ifelse(`gross(in $)` > quantile(`gross(in $)`, 0.95, na.rm = T), movie_name, NA)) %>% 
+  mutate(col = ifelse(!is.na(nome), "Importante", "Não Importante")) %>%
+  ggplot() +
+  aes(x = year, 
+      y = rating, 
+      label = nome, 
+      color = col)+
+  geom_point() +
+  geom_text_repel(box.padding = 0.5, 
+                  max.overlaps = 1000, 
+                  nudge_x = .15,
+                  nudge_y = 1,
+                  segment.curvature = -0.1,
+                  segment.ncp = 3,
+                  segment.angle = 20
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p2 = Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  ggplot() +
+  aes(group = year, 
+      y = rating, 
+  )+
+  geom_boxplot() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p3 = Files %>% 
+  filter(tipo %in% c("animation")) %>% 
+  group_by(year) %>% 
+  summarise(rate = mean(rating, na.rm = TRUE)) %>% 
+  ggplot()+
+  aes(x = year, 
+      y = rate) + 
+  geom_line() +
+  geom_point() +
+  theme_minimal()
+
+p1 / p2
+```
+
+
+**Comunicação - parte 8**
+##Quarto
+Alterando dados do documento:
+
+---
+title: "Seu Título Aqui"
+subtitle: "Seu Subtítulo Aqui"
+author: "Seu Nome aqui"
+date: 10/10/2023
+date-format: long # date-format: dddd MMM D, YYYY   
+lang: pt
+---
+
+##Alterando tema
+
+title: "Seu Título Aqui"
+subtitle: "Seu Subtítulo Aqui"
+author: "Seu Nome aqui"
+date: 10/10/2023
+date-format: long # date-format: dddd MMM D, YYYY   
+lang: pt
+theme: 
+  light: yeti
+  dark: slate
+format: 
+  pdf: 
+    highlight-style: dracula
+  html:
+    highlight-style: solarized
+  docx: default
+  
+
+##Formatação de códigos
+---
+title: "Seu Título Aqui"
+subtitle: "Seu Subtítulo Aqui"
+author: "Seu Nome aqui"
+date: 10/10/2023
+date-format: long # date-format: dddd MMM D, YYYY   
+lang: pt
+title-block-style: none
+theme: 
+  light: yeti
+  dark: slate
+  
+format: 
+  html:
+    code-fold: true
+    code-summary: "R"
+    code-overflow: scroll
+    code-tools: true
+    code-line-numbers: false
+    highlight-style: dracula
+    code-link: true ## Funciona se o code-line é false
+---
+
+##Tema de código
+
+title: "Seu Título Aqui"
+subtitle: "Seu Subtítulo Aqui"
+author: "Seu Nome aqui"
+date: 10/10/2023
+date-format: long # date-format: dddd MMM D, YYYY   
+lang: pt
+theme: 
+  light: yeti
+dark: slate
+format: 
+  pdf: 
+  highlight-style: dracula
+html:
+  highlight-style: solarized
+docx: default
+
+##Shiny
+```{r}
+##Utilizar o pacote shinyextra e tbm o shinyui
+##E também o ShinyUiEditor
+```
+
 
