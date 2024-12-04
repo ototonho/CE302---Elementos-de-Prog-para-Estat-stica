@@ -1,6 +1,9 @@
 install.packages("vegan")
 install.packages("networkD3")
 install.packages("fmsb")
+install.packages("Hmisc")
+install.packages("reshape2")
+library(Hmisc)
 library(vegan)
 library(tidyverse)
 library(gridExtra)
@@ -214,15 +217,22 @@ View(cor_veneno)
 
 ##Distribuição de cores por classe
 
-g1 <- ggplot(cor_veneno, aes(x = class, y = proportions, fill = cap.color)) +
-  geom_bar(stat = "identity") +
+g1 <- ggplot(cor_veneno, aes(x = cap.color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "edible" = "#ffcc80",
+      "poisonous" = "#388e3c"
+    )
+  ) +
   labs(
-    title = "Distribuição de cores por classe",
+    title = "Frequência de cores por classe",
     x = "Classe",
-    y = "Proporção",
+    y = "Frequência",
     fill = "Cor"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 g1
 

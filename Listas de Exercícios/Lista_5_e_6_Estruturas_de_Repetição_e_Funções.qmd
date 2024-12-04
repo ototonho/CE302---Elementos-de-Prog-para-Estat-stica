@@ -83,35 +83,55 @@ length(calcular_sequencia(limite))
 *1.  Implemente uma função chamada calcular_aumento(codigo, salario) que receba o código do cargo e o salário atual, e retorne o valor do aumento e o novo salário.*
 
 ```{r}
-calcular_aumento <- function(codigo, salario){
+
+# Função para calcular o aumento de salário
+calcular_aumento <- function(codigo, salario) {
+  # Verifica se o código do cargo é válido
+  if (codigo < 1 || codigo > 5) {
+    stop("Código inválido. O código deve estar entre 1 e 5.")
+  }
+  
+  # Verifica se o salário é válido
+  if (salario <= 0) {
+    stop("Salário inválido. O salário deve ser maior que zero.")
+  }
+  
+  # Inicializa a variável percentual com valor 0
   percentual <- 0
-  if(codigo == 1){
-    percentual <- 0.10
+  
+  # Atribui o percentual de aumento conforme o código do cargo
+  if (codigo == 1) {
+    percentual <- 0.10  # 10% de aumento para Estagiário
+  } else if (codigo == 2) {
+    percentual <- 0.20  # 20% de aumento para Analista Jr
+  } else if (codigo == 3) {
+    percentual <- 0.22  # 22% de aumento para Analista Pleno
+  } else if (codigo == 4) {
+    percentual <- 0.25  # 25% de aumento para Analista Senior
+  } else if (codigo == 5) {
+    percentual <- 0.28  # 28% de aumento para Especialista
   }
-  else if(codigo == 2){
-    percentual <- 0.20
-  }
-  else if(codigo == 3){
-    percentual <- 0.22
-  }
-  else if(codigo == 4){
-    percentual <- 0.25
-  }
-  else if(codigo == 5){
-    percentual <- 0.28
-  } else {
-    stop("Código inválido")
-  }
+  
+  # Calcula o valor do aumento e o novo salário
   aumento <- salario * percentual
   novo_salario <- salario + aumento
+  
+  # Retorna o aumento e o novo salário em uma lista
   return(list(aumento = aumento, novo_salario = novo_salario))
 }
+
+# Leitura dos dados
 codigo <- as.numeric(readline(prompt = "Digite o código do cargo (1 a 5): "))
 salario <- as.numeric(readline(prompt = "Digite o salário atual: "))
 
-Analista_P <- calcular_aumento(codigo, salario)
-cat("Aumento: R$", Analista_P$aumento, "\n")
-cat("Novo salário: R$", Analista_P$novo_salario, "\n")
+# Chama a função para calcular o aumento
+resultado <- calcular_aumento(codigo, salario)
+
+# Exibe o resultado
+cat("Aumento: R$", round(resultado$aumento, 2), "\n")
+cat("Novo salário: R$", round(resultado$novo_salario, 2), "\n")
+
+
 ```
 
 *2.  Aplique a função sobre uma lista de funcionários com diferentes cargos e salários, e exiba os resultados.*

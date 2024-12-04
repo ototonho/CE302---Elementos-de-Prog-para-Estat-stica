@@ -1,0 +1,327 @@
+---
+title: "Exercícios de Estruturas de Repetição e Funções"
+format: pdf
+editor: visual
+theme: lux
+fontcolor: "#212121"
+---
+
+
+
+# Estruturas de Repetição e Funções
+
+## Questão 1
+
+### Dado o conjunto de números naturais entre 1 e 500.000, resolva as questões a seguir:
+
+*1. Quantos números primos existem neste intervalo?*
+
+Dica: Crie uma função chamada contar_primos(limite) que receba um número limite (neste caso, 500.000) e retorne a quantidade de números primos encontrados.
+
+
+
+```{r}
+primo <- function(n) {
+  if (n <= 1) return(FALSE)
+  if (n == 2) return(TRUE)
+  if (n %% 2 == 0) return(FALSE)
+  
+
+  for (i in seq(3, floor(sqrt(n)), by = 2)) {
+    if (n %% i == 0) return(FALSE)
+  }
+  
+  return(TRUE)
+}
+
+contar_primos <- function(i){
+  conta_primos <- 0
+  for (n in i:500000) {
+    if (primo(n)) {
+      conta_primos <- conta_primos + 1
+    }
+  }
+  return(conta_primos)
+}
+
+i <- 50
+contar_primos(i)
+```
+
+
+
+*2. Quantos números pertencem à sequência ( S_i ), definida por*:
+
+[ S_i = i + frac{i^2}{2}]
+
+Condição: Considere apenas os números de ( S_i ) no intervalo [1, 500.000]. **Dica: Implemente uma função chamada calcular_sequencia(limite) que retorne os números ( S_i ) que atendem à condição.**
+
+
+
+```{r}
+calcular_sequencia <- function(limite) {
+  sequencia <- c()
+  for (i in 1:limite) {
+    S_i <- i + (i^2) / 2
+    if (S_i >= 1 && S_i <= 500000) {
+      sequencia <- c(sequencia, S_i)
+    }
+  }
+  return(sequencia)
+}
+
+limite <- 500000
+calcular_sequencia(limite)
+length(calcular_sequencia(limite))
+```
+
+
+
+## Questão 2
+
+### Faça um programa que calcule o novo salário de um funcionário com base no código de seu cargo, de acordo com a tabela abaixo:
+
+
+| Código | Cargo           | Aumento |
+|--------|-----------------|---------|
+| 1      | Estagiário      | 10%     |
+| 2      | Analista Jr     | 20%     |
+| 3      | Analista Pleno  | 22%     |
+| 4      | Analista Senior | 25%     |
+| 5      | Especialista    | 28%     |
+
+*1.  Implemente uma função chamada calcular_aumento(codigo, salario) que receba o código do cargo e o salário atual, e retorne o valor do aumento e o novo salário.*
+
+
+
+```{r}
+calcular_aumento <- function(codigo, salario){
+  percentual <- 0
+  if(codigo == 1){
+    percentual <- 0.10
+  }
+  else if(codigo == 2){
+    percentual <- 0.20
+  }
+  else if(codigo == 3){
+    percentual <- 0.22
+  }
+  else if(codigo == 4){
+    percentual <- 0.25
+  }
+  else if(codigo == 5){
+    percentual <- 0.28
+  } else {
+    stop("Código inválido")
+  }
+  aumento <- salario * percentual
+  novo_salario <- salario + aumento
+  return(list(aumento = aumento, novo_salario = novo_salario))
+}
+codigo <- as.numeric(readline(prompt = "Digite o código do cargo (1 a 5): "))
+salario <- as.numeric(readline(prompt = "Digite o salário atual: "))
+
+Analista_P <- calcular_aumento(codigo, salario)
+cat("Aumento: R$", Analista_P$aumento, "\n")
+cat("Novo salário: R$", Analista_P$novo_salario, "\n")
+```
+
+
+
+*2.  Aplique a função sobre uma lista de funcionários com diferentes cargos e salários, e exiba os resultados.*
+
+
+
+```{r}
+funcionarios <- data.frame(
+  Nome = c("Melissa", "Alice", "Cecília", "Anderson", "Rubão", "Odoacro"),
+  Codigo_Cargo = c(1, 2, 3, 3, 4, 5),
+  Salario_atual = c(1200, 2500, 3300, 3500, 4500, 6000)
+)
+
+resultado <- apply(funcionarios, 1, function(row){
+  calculo <- calcular_aumento(as.numeric(row["Codigo_Cargo"]), as.numeric(row["Salario_atual"]))
+  c(Aumento = calculo$aumento, Novo_Salario = calculo$novo_salario)
+})
+
+resultado <- t(resultado)
+colnames(resultado) <- c("Aumento", "Novo_Salario")
+funcionarios <- cbind(funcionarios, resultado)
+```
+
+
+
+## Questão 3
+
+### Um indivíduo possui três meios de transporte e escolhe o mais apropriado com base nas condições abaixo:
+
+
+1.  Escolha do meio de transporte com base na distância:
+
+-   Mais de 500 km: Avião.
+-   Entre 50 e 500 km: Carro.
+-   Menos de 50 km: Bicicleta.
+
+2.  Escolha do combustível quando usa o carro:
+
+-   Etanol: até 75% do preço da gasolina.
+-   GNV: até 60% do preço da gasolina.
+-   Caso contrário: Gasolina.
+
+**Implemente as seguintes funções**:
+
+*1. escolher_transporte(distancia)* - Retorna o meio de transporte ideal com base na distância.
+
+
+
+```{r}
+escolher_transporte <- function(distancia){
+  veiculo <- NULL
+  
+  if (distancia <= 50) {
+    veiculo <- "bicicleta"
+  } else if (distancia > 50 & distancia <= 500) {
+    veiculo <- "carro"
+  } else if (distancia > 500) {
+    veiculo <- "avião"
+  } else {
+    stop("Digite novamente uma distância válida.")
+  }
+  
+   return(paste("O meio de transporte ideal é:", veiculo))
+}
+distancia <- as.numeric(readline(prompt = "Digite a distância (em km): "))
+
+resultado <- escolher_transporte(distancia)
+print(resultado)
+```
+
+
+
+*2. escolher_combustivel(preco_gasolina, preco_etanol, preco_gnv)* - Retorna o combustível ideal baseado nos preços atuais.
+
+
+
+```{r}
+escolher_combustivel <- function(preco_gasolina, preco_etanol, preco_gnv) {
+  if (preco_etanol <= 0.75 * preco_gasolina) {
+    return("Etanol")
+  } else if (preco_gnv <= 0.60 * preco_gasolina) {
+    return("GNV")
+  } else {
+    return("Gasolina")
+  }
+}
+```
+
+
+
+
+3.  Utilize as funções para responder:
+
+-   Qual transporte e combustível o indivíduo deve escolher para ir:
+    -   A Florianópolis (750 km).
+    -   A Natal (3.000 km).
+    -   A Araucária (25 km).
+
+
+
+```{r}
+##Aplicação para as cidades dadas:
+
+# Florianópolis (750 km)
+transporte_florianopolis <- escolher_transporte(750)
+combustivel_florianopolis <- NA  # Não aplicável, pois o transporte é o avião
+
+# Natal (3.000 km)
+transporte_natal <- escolher_transporte(3000)
+combustivel_natal <- NA  # Não aplicável, pois o transporte é o avião
+
+# Araucária (25 km)
+transporte_araucaria <- escolher_transporte(25)
+combustivel_araucaria <- NA  # Não aplicável, pois o transporte é a bicicleta
+
+# Exibir resultados
+cat("Florianópolis (750 km): Transporte:", transporte_florianopolis, "\n")
+cat("Natal (3.000 km): Transporte:", transporte_natal, "\n")
+cat("Araucária (25 km): Transporte:", transporte_araucaria, "\n")
+```
+
+
+
+## Questão 4
+
+### Crie uma matriz ( M ) ( 10 \times 10 ) preenchida com números aleatórios entre 1 e 100. Desenvolva as seguintes funções para manipular a matriz:
+
+
+1. soma_linha(matriz, linha) - Calcula a soma dos elementos de uma linha específica.
+
+2. soma_coluna(matriz, coluna) - Calcula a soma dos elementos de uma coluna específica.
+
+3. diagonal_principal(matriz) - Retorna os elementos da diagonal principal.
+
+4 diagonal_secundaria(matriz) - Retorna os elementos da diagonal secundária.
+
+
+*Teste todas as funções percorrendo a matriz. Mostre*:
+
+- A soma dos elementos de cada linha.
+
+- A soma dos elementos de cada coluna.
+
+- Os elementos da diagonal principal e secundária.
+
+
+
+```{r}
+# Criar matriz M 10x10 com números aleatórios entre 1 e 100
+set.seed(123)  # Para reprodutibilidade
+M <- matrix(sample(1:100, 100, replace = TRUE), nrow = 10, ncol = 10)
+
+
+# 1. Função para calcular a soma dos elementos de uma linha específica
+soma_linha <- function(matriz, linha) {
+  return(sum(matriz[linha, ]))
+}
+
+# 2. Função para calcular a soma dos elementos de uma coluna específica
+soma_coluna <- function(matriz, coluna) {
+  return(sum(matriz[, coluna]))
+}
+
+# 3. Função para retornar os elementos da diagonal principal
+diagonal_principal <- function(matriz) {
+  return(diag(matriz))
+}
+
+# 4. Função para retornar os elementos da diagonal secundária
+diagonal_secundaria <- function(matriz) {
+  return(diag(matriz[, ncol(matriz):1]))
+}
+
+## Testando as funções
+# Mostrar a matriz gerada
+cat("Matriz M (10x10):\n")
+print(M)
+
+# A soma dos elementos de cada linha
+cat("\nSoma dos elementos de cada linha:\n")
+for (i in 1:nrow(M)) {
+  cat("Linha", i, ":", soma_linha(M, i), "\n")
+}
+
+# A soma dos elementos de cada coluna
+cat("\nSoma dos elementos de cada coluna:\n")
+for (j in 1:ncol(M)) {
+  cat("Coluna", j, ":", soma_coluna(M, j), "\n")
+}
+
+# Elementos da diagonal principal
+cat("\nElementos da diagonal principal:\n")
+print(diagonal_principal(M))
+
+# Elementos da diagonal secundária
+cat("\nElementos da diagonal secundária:\n")
+print(diagonal_secundaria(M))
+```
+

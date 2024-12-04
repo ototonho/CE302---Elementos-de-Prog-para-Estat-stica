@@ -1,0 +1,402 @@
+---
+title: "P2 ano passado"
+format: html
+editor: visual
+theme: lux
+fontcolor: "#212121"
+---
+
+## P2
+
+### Primeira Questão (3 pontos) 
+
+A variância amostral (S²), o desvio médio absoluto (DMA) e o segundo coeficiente de assimetria de Pearson (AS_2) são medidas definidas, respectivamente, por
+
+$$
+S^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2
+$$
+
+$$
+DMA = \frac{1}{n-1} \sum_{i=1}^{n} |x_i - \bar{x}|
+$$
+
+$$
+AS_2 = 3 \cdot \frac{\bar{x} - M_d}{S}
+$$
+
+em que x¯ é a média amostral, Md é a mediana e |a| corresponde ao módulo de a. Implemente uma função em R que retorne uma lista com o S², o DMA e o AS2 de uma
+variável quantitativa qualquer. Na sequência, assinale todas as alternativas correta(s), considerando o banco de dados airquality disponível no R.
+
+## *Resolução*
+
+```{r}
+calcula_medidas <- function(x) {
+  # Removendo valores ausentes
+  x <- na.omit(x)
+  
+  # Cálculo da média amostral
+  media <- mean(x)
+  
+  # Cálculo da variância amostral
+  variancia <- sum((x - media)^2) / (length(x) - 1)
+  
+  # Cálculo do desvio médio absoluto (DMA)
+  dma <- sum(abs(x - media)) / (length(x) - 1)
+  
+  # Cálculo da mediana
+  mediana <- median(x)
+  
+  # Cálculo do coeficiente de assimetria de Pearson (AS2)
+  as2 <- 3 * (media - mediana) / sqrt(variancia)
+  
+  # Retornando uma lista com os resultados
+  return(list(S2 = variancia, DMA = dma, AS2 = as2))
+}
+
+# Exemplo de aplicação com o dataset airquality
+resultados <- calcula_medidas(airquality$Ozone)
+print(resultados)
+
+```
+
+
+## Segunda questão (3 pontos)
+
+Considere uma matriz m × m, em que m é um inteiro positivo. Implemente uma
+função em R que realize a varredura de uma matriz e execute uma operação específica que depende do valor encontrado na matriz, conforme as seguintes regras:
+
+- Se o valor for um número primo, multiplique-o por 8;
+
+- Se o valor for um quadrado perfeito, subtraia 19. Caso o resultado obtido for negativo, eleve a 7ª potência;
+
+-  Se o valor for negativo na matriz original, calcule a raiz 3a de seu módulo;
+
+- Para todos os outros valores, não faça nada.
+
+A função a ser criada deve retornar a matriz transformada. Considere:
+
+
+
+$$
+\text{Matriz A: } 
+\begin{bmatrix}
+  3 & -3 & 6 & -8 \\
+  1 & 2 & -10 & -7 \\
+  8 & -2 & -9 & -4 \\
+  10 & -5 & -1 & 7
+\end{bmatrix}
+$$
+
+$$
+\text{Matriz B: } 
+\begin{bmatrix}
+  -1 & 8 & 13 & -16 \\
+  0 & 16 & 18 & -6 \\
+  -18 & -15 & -2 & -11 \\
+  11 & -12 & -13 & 3 \\
+  -4 & 5 & -19 & 17
+\end{bmatrix}
+$$
+
+$$
+\text{Matriz C: } 
+\begin{bmatrix}
+  -22 & 14 & 21 & 19 \\
+  23 & -20 & -17 & 17 \\
+  -7 & -11 & -23 & 28 \\
+  24 & -14 & -5 & 8
+\end{bmatrix}
+$$
+
+É possível criar essas mesmas matrizes  a partir do ambiente *bmatrix*, que cria colchetes ao redor da matriz.
+
+É possível usar outros ambientes, como:
+
+- pmatrix (parênteses).
+
+- vmatrix (linhas verticais).
+
+- Bmatrix (chaves).
+
+
+## *Resolução*
+
+
+```{r}
+
+# Função para verificar se um número é primo
+eh_primo <- function(x) {
+  if (x <= 1) return(FALSE)
+  for (i in 2:floor(sqrt(x))) {
+    if (x %% i == 0) return(FALSE)
+  }
+  return(TRUE)
+}
+
+# Função para verificar se é um quadrado perfeito
+eh_quadrado_perfeito <- function(x) {
+  if (is.na(x) || !is.numeric(x) || x < 0) {  # Verifica se x é NA, não numérico ou negativo
+    return(FALSE)
+  }
+  
+  raiz <- sqrt(x)
+  return(raiz == floor(raiz))
+}
+
+
+# Função principal para aplicar as regras
+transforma_matriz <- function(mat) {
+  apply(mat, c(1, 2), function(x) {
+    if (eh_primo(x)) {
+      return(x * 8)
+    } else if (eh_quadrado_perfeito(x)) {
+      resultado <- x - 19
+      if (resultado < 0) {
+        return(resultado^7)
+      }
+      return(resultado)
+    } else if (x < 0) {
+      return(abs(x)^(1/3))
+    } else {
+      return(x) # Não faz nada para outros valores
+    }
+  })
+}
+
+# Testando a função com uma matriz exemplo
+matriz_A <- matrix(c(3, -3, 6, -8, 1, 2, -10, -7, 8, -2, -9, -4, 10, -5, -1, 7), nrow = 4, byrow = TRUE)
+matriz_transformada <- transforma_matriz(matriz_A)
+print(matriz_transformada)
+
+```
+
+
+## Outras fórmulas estatísticas interessantes
+
+1. *Média Aritmética* 
+
+```{r}
+media_aritmetica <- function(x) {
+  mean(x)
+}
+```
+
+2 . *Variância e desvio amostral*
+
+```{r}
+variancia_amostral <- function(x) {
+  var(x)
+}
+
+desvio_padrao_amostral <- function(x) {
+  sd(x)
+}
+```
+
+3. *Coeficiente de variação*
+
+```{r}
+coeficiente_variacao <- function(x) {
+  (sd(x) / mean(x)) * 100
+}
+```
+
+4 . *Correlação de Pearson*
+
+```{r}
+correlacao_pearson <- function(x, y) {
+  cor(x, y)
+}
+```
+
+5. *Coeficiente de assimetria*
+
+```{r}
+coeficiente_assimetria <- function(x) {
+  n <- length(x)
+  media <- mean(x)
+  desvio_padrao <- sd(x)
+  sum((x - media)^3) / (n * desvio_padrao^3)
+}
+
+```
+
+6. *Curtose*
+
+```{r}
+curtose <- function(x) {
+  n <- length(x)
+  media <- mean(x)
+  desvio_padrao <- sd(x)
+  (sum((x - media)^4) / (n * desvio_padrao^4)) - 3
+}
+```
+
+7. *Intervalo de confiança para a média*
+
+```{r}
+intervalo_confianca_media <- function(x, conf.level = 0.95) {
+  n <- length(x)
+  media <- mean(x)
+  erro_padrao <- sd(x) / sqrt(n)
+  t_value <- qt(1 - (1 - conf.level) / 2, df = n - 1)
+  c(media - t_value * erro_padrao, media + t_value * erro_padrao)
+}
+```
+
+8. *Teste de t-Student*
+
+```{r}
+teste_t_student <- function(x, mu) {
+  t.test(x, mu = mu)
+}
+```
+
+9. *Regressão linear simples*
+
+```{r}
+regressao_linear <- function(x, y) {
+  modelo <- lm(y ~ x)
+  summary(modelo)
+}
+```
+
+10. *Qui-quadrado*
+
+```{r}
+estatistica_qui_quadrado <- function(observados, esperados) {
+  sum((observados - esperados)^2 / esperados)
+}
+```
+
+11. *Coeficiente de determinação (R²)*
+
+```{r}
+coeficiente_determinacao <- function(x, y) {
+  modelo <- lm(y ~ x)
+  summary(modelo)$r.squared
+}
+```
+
+12. *Teste F para regressão*
+
+```{r}
+teste_F_regressao <- function(x, y) {
+  modelo <- lm(y ~ x)
+  summary(modelo)$fstatistic
+}
+```
+
+## Outras funções interessantes
+
+1. Cálculo de área
+
+```{r}
+calcula_area <- function(raio = 1) {
+  return(pi * raio^2)
+}
+```
+
+2. Condicional
+
+```{r}
+classificar_numero <- function(x) {
+  if (x > 0) {
+    return("positivo")
+  } else if (x < 0) {
+    return("negativo")
+  } else {
+    return("zero")
+  }
+}
+```
+
+3. Funções com vetores
+
+```{r}
+soma_elementos <- function(vetor) {
+  return(sum(vetor))
+}
+```
+
+4. Função com loop
+
+```{r}
+fatorial <- function(n) {
+  resultado <- 1
+  for (i in 1:n) {
+    resultado <- resultado * i
+  }
+  return(resultado)
+}
+```
+
+5. Apply
+
+```{r}
+soma_linhas <- function(matriz) {
+  return(apply(matriz, 1, sum))
+}
+```
+
+
+6. Lista
+
+```{r}
+calcular_media <- function(lista) {
+  return(mean(lista))
+}
+```
+
+7. Recursiva
+
+```{r}
+fib <- function(n) {
+  if (n <= 1) {
+    return(n)
+  } else {
+    return(fib(n - 1) + fib(n - 2))
+  }
+}
+```
+
+8. Return e print
+
+```{r}
+divisao <- function(a, b) {
+  if (b == 0) {
+    print("Erro: divisão por zero")
+    return("Erro: divisão por zero")
+  } else {
+    return(a / b)
+  }
+}
+```
+
+9. Distribuição de probabilidade
+
+```{r}
+distribuicao_normal <- function(mu, sigma, tamanho) {
+  return(rnorm(tamanho, mean = mu, sd = sigma))
+}
+```
+
+10. lapply
+
+```{r}
+#recebendo ums lista com numeros telefonicos e retorna cada um * 2
+duplicar <- function(lista) {
+  return(lapply(lista, function(x) x * 2))
+}
+```
+
+11. Condicional com loop
+
+```{r}
+contar_pares_impares <- function(vetor) {
+  pares <- sum(vetor %% 2 == 0)
+  impares <- sum(vetor %% 2 != 0)
+  return(list(pares = pares, impares = impares))
+}
+```
+
