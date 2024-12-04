@@ -1,0 +1,283 @@
+---
+title: "Prova 2"
+format: html
+editor: visual
+---
+
+# Prova 2
+
+## Questão 1
+
+A variância amostral (S2), o desvio médio absoluto (DMA) e o segundo coeficiente de assimetria de Pearson (AS_2) são medidas definidas, respectivamente, por:
+
+
+$$
+S2=1/n−1 ∑i=1n (xi−x¯)²
+$$
+
+$$
+DMA=1 n−1∑i=1n |xi−x¯|
+$$
+$$
+AS2=3⋅x¯−MdS
+$$
+
+em que x¯ é a média amostral, Md é a mediana e |a| corresponde ao módulo de a.
+
+Implemente uma função em R que retorne uma lista com o S2, o DMA e o AS2 de uma variável quantitativa qualquer. Considere o banco de dados airquality disponível no R, e responda o que se pede.
+
+*Resolução*:
+
+```{r}
+calculo_de_medidas <- function(x){
+  # Removendo NA's
+  x <- na.omit(x)
+  
+  # Cálculo da média
+  media <- mean(x)
+  
+  #Cálculo da mediana
+  mediana <- median(x)
+  
+  # Cálculo da variância amostral
+  variancia <- sum((x - media)^2) / (length(x) - 1)
+  
+  # Cálculo do desvio médio absoluto (DMA)
+  dma <- sum(abs(x - media)) / (length(x) - 1)
+
+  # Cálculo do coeficiente de assimetria de Pearson (AS2)
+  as2 <- 3 * (media - mediana) / sqrt(variancia)
+  
+  return((list(S2 = variancia, DMA = dma, AS2 = as2)))
+}
+
+## a) e b) S² e DMA de Temp
+calculo_de_medidas(airquality$Temp)
+
+## c) Nivel 7 de Month - Wind
+calculo_de_medidas(airquality$Month)
+Niveis <- airquality %>%
+  filter(Month == 7)
+View(Niveis)
+
+calculo_de_medidas(Niveis$Wind)
+
+## d) Para todas as variáveis do banco airquality a variância amostral é maior do que o desvio médio absoluto. (TRUE = 1/FALSE = 0)?
+lista_variaveis <- list(calculo_de_medidas(airquality$Ozone),
+calculo_de_medidas(airquality$Solar.R),
+calculo_de_medidas(airquality$Wind),
+calculo_de_medidas(airquality$Temp),
+calculo_de_medidas(airquality$Month),
+calculo_de_medidas(airquality$Day))
+View(lista_variaveis)
+
+```
+
+
+## Questão 2
+
+Considere uma matriz m×m, em que m é um inteiro positivo. Implemente uma função em R que realize a varredura de uma matriz e execute uma operação específica que depende do valor encontrado na matriz, conforme as seguintes regras:
+
+- Se o valor for um número primo, multiplique-o por 6.
+
+- Se o valor for um quadrado perfeito, subtraia 15. Caso o resultado obtido for negativo, eleve a 5a potência.
+
+- Se o valor for negativo na matriz original, calcule a raiz 2ª de seu módulo.
+
+- Para todos os outros valores, não faça nada.
+
+A função a ser criada deve retornar a matriz transformada.
+
+- Dica: Crie funções auxiliares para verificar se um número é primo e se é um quadrado perfeito, e então implemente a função varrer_matriz que realiza a varredura da matriz conforme as regras estabelecidas.
+
+Considere:
+Matriz A: matrix( c(-5, -8, 4, -4, 9, -2, 6, 5, -3, -1, 3, -9, 10, 7, -6, 1) , nrow = 4, byrow = FALSE)
+
+Matriz B: matrix( c(9, -4, -18, 11, -14, 7, 2, 3, 17, 14, 0, 16, -6, -19, -8, -1, -20, 20, 5, 6) , nrow = 4, byrow = FALSE)
+
+Matriz C: matrix( c(-29, -23, -24, 21, -12, 25, 17, 16, 8, 29, 0, -5, -17, -4, -7, 14) , nrow = 4, byrow = FALSE)
+
+*Resolução*:
+
+```{r}
+# Verificar se um número é primo
+primo <- function(x) {
+  if (x <= 1) return(FALSE)
+  for (i in 2:floor(sqrt(x))) {
+    if (x %% i == 0) return(FALSE)
+  }
+  return(TRUE)
+}
+
+# Verificar se é um quadrado perfeito
+quadrado_perfeito <- function(x) {
+  if (is.na(x) || !is.numeric(x) || x < 0) {  # Verifica se x é NA, não numérico ou negativo
+    return(FALSE)
+  }
+  
+  raiz <- sqrt(x)
+  return(raiz == floor(raiz))
+}
+
+
+# Função principal para aplicar as regras
+transforma_matriz <- function(mat) {
+  apply(mat, c(1, 2), function(x) {
+    if (primo(x)) {
+      return(x * 6)
+    } else if (quadrado_perfeito(x)) {
+      resultado <- x - 15
+      if (resultado < 0) {
+        return(resultado^5)
+      }
+      return(resultado)
+    } else if (x < 0) {
+      return(abs(x)^(1/2))
+    } else {
+      return(x) # Não faz nada para outros valores
+    }
+  })
+}
+
+
+Matriz_A <- matrix( c(-5, -8, 4, -4, 9, -2, 6, 5, -3, -1, 3, -9, 10, 7, -6, 1) , nrow = 4, byrow = FALSE)
+
+Matriz_B <- matrix( c(9, -4, -18, 11, -14, 7, 2, 3, 17, 14, 0, 16, -6, -19, -8, -1, -20, 20, 5, 6) , nrow = 4, byrow = FALSE)
+
+Matriz_C <- matrix( c(-29, -23, -24, 21, -12, 25, 17, 16, 8, 29, 0, -5, -17, -4, -7, 14) , nrow = 4, byrow = FALSE)
+
+M_A_transformada <- transforma_matriz(Matriz_A)
+print(M_A_transformada)
+
+M_B_transformada <- transforma_matriz(Matriz_B)
+print(M_B_transformada)
+
+M_C_transformada <- transforma_matriz(Matriz_C)
+print(M_C_transformada)
+
+
+#a)
+soma_MA <- M_A_transformada[1,1] + M_A_transformada[2,2] + M_A_transformada[3,3] + M_A_transformada [4,4]
+print(soma_MA)
+
+#b) 
+print(M_C_transformada)
+
+#c)
+sum(M_C_transformada[,2])
+
+#d)
+primo <- function(n) {
+  if (n <= 1) return(FALSE)
+  if (n == 2) return(TRUE)
+  if (n %% 2 == 0) return(FALSE)
+  
+  
+  for (i in matrix(3, floor(sqrt(n)), by = 2)) {
+    if (n %% i == 0) return(FALSE)
+  }
+  
+  return(TRUE)
+}
+
+contar_primos <- function(i){
+  conta_primos <- 0
+  for (n in i) {
+    if (primo(n)) {
+      conta_primos <- conta_primos + 1
+    }
+  }
+  return(conta_primos)
+}
+
+i <- M_A_transformada
+iA <- contar_primos(i)
+print(iA)
+
+i <- M_B_transformada
+iB <- contar_primos(i)
+print(iB)
+
+i <- M_C_transformada
+iC <- contar_primos(i)
+print(iC)
+
+iA + iB + iC
+
+```
+
+
+## Questão 3
+
+O *Lago Baikal*, na Rússia, é famoso por sua abundância de nutrientes e por sua beleza natural, sendo lar da espécie de peixe Omul do Baikal (Coregonus migratorius). O lago pode suportar uma capacidade máxima de 5 × 105 peixes e apresenta uma taxa de reprodução basal de 6% ao dia.
+
+Essa taxa de reprodução varia de acordo com a temperatura média da estação do ano, conforme a Tabela 1. Além disso, o pH da água afeta o comportamento dos pescadores, que pescam diferentes porcentagens de peixes por dia, conforme a Tabela 2.
+
+| Estacao  | Temperatura     | FatorReproducao |
+|----------|-----------------|-----------------|
+| Pri      | 0               | 0.00            |
+| Ver      | 20              | 0.03            |
+| Out      | 10              | -0.03           |
+| Inv      | 0               | -0.02           |
+
+| FaixaPH | PercentualPescado |
+|---------|-------------------|
+| 6.0–6.5 | 0.12              |
+| 6.6–7.0 | 0.20              |
+| 7.1–7.5 | 0.05              |
+| 7.6–8.0 | 0.16              |
+
+No entanto, a pesca excessiva e a poluição têm afetado a população de peixes no lago. Hoje, têm-se 80 peixes no lago, e um programa de monitoramento foi implementado para avaliar o impacto dessas variáveis na população de peixes.
+
+### Sua Tarefa
+
+1. Crie uma função chamada simular_lago que receba como entrada os seguintes parâmetros:
+
+- dias: Número de dias do experimento.
+
+- peixes_iniciais: Número inicial de peixes no lago.
+
+- estacao: Estação do ano (Primavera, Verão, Outono ou Inverno).
+
+- ph: pH médio da água durante o experimento.
+
+2. A função deve calcular:
+
+- O número de peixes no lago a cada dia.
+
+- O número de dias até o lago atingir sua capacidade máxima ou o número final de peixes ao fim do período definido por dias.
+
+3. Saída esperada:
+
+- Um data frame com duas colunas: dias e peixes, onde dias é o número do dia e peixes é o número de peixes no lago naquele dia.
+
+### Fórmula
+
+A cada dia, o número de peixes é calculado como:
+
+Peixes no próximo dia=Peixes atuais×(1+taxa de reprodução ajustada)−peixes pescados
+
+Onde:
+
+Taxa de reprodução ajustada:
+
+Taxa basal+fator de ajuste da Tabela 1.
+
+Peixes pescados:
+
+Peixes atuais×porcentagem de peixes pescados (Tabela 2).
+
+Observação: O número de peixes nunca pode exceder a capacidade máxima do lago, e o número máximo de dias que os pesquisadores irão quantificar os peixes é 1000 dias. Além disso, contagem de peixes é sempre um número inteiro, considere sempre arredondar para cima.
+
+a) Durante a estação Verão e com pH médio da água de 6.6–7.0, após 16 dias, quantos peixes haverá no lago?
+
+b) Durante a estação Verão e com pH médio da água de 6.6–7.0, quantos dias são necessários para o lago atingir sua capacidade máxima?
+
+c) Durante a estação Outono e com pH médio da água de 6.0–6.5, após 87 dias, quantos peixes haverá no lago?
+
+d) Durante a estação Outono e com pH médio da água de 6.0–6.5, quantos dias são necessários para o lago atingir sua capacidade máxima?
+
+```{r}
+
+```
+
