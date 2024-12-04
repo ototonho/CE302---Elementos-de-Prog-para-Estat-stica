@@ -207,7 +207,7 @@ iA + iB + iC
 ```
 
 
-## Questão 3
+## Questão 3 - Não deu :()
 
 O *Lago Baikal*, na Rússia, é famoso por sua abundância de nutrientes e por sua beleza natural, sendo lar da espécie de peixe Omul do Baikal (Coregonus migratorius). O lago pode suportar uma capacidade máxima de 5 × 105 peixes e apresenta uma taxa de reprodução basal de 6% ao dia.
 
