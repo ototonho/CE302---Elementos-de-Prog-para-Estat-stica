@@ -46,9 +46,9 @@ contar_primos(i)
 
 *2. Quantos números pertencem à sequência ( S_i ), definida por*:
 
-[ S_i = i + frac{i^2}{2}]
+\[ S_i = i + frac{i\^2}{2}\]
 
-Condição: Considere apenas os números de ( S_i ) no intervalo [1, 500.000]. **Dica: Implemente uma função chamada calcular_sequencia(limite) que retorne os números ( S_i ) que atendem à condição.**
+Condição: Considere apenas os números de ( S_i ) no intervalo \[1, 500.000\]. **Dica: Implemente uma função chamada calcular_sequencia(limite) que retorne os números ( S_i ) que atendem à condição.**
 
 ```{r}
 calcular_sequencia <- function(limite) {
@@ -71,7 +71,6 @@ length(calcular_sequencia(limite))
 
 ### Faça um programa que calcule o novo salário de um funcionário com base no código de seu cargo, de acordo com a tabela abaixo:
 
-
 | Código | Cargo           | Aumento |
 |--------|-----------------|---------|
 | 1      | Estagiário      | 10%     |
@@ -80,19 +79,19 @@ length(calcular_sequencia(limite))
 | 4      | Analista Senior | 25%     |
 | 5      | Especialista    | 28%     |
 
-*1.  Implemente uma função chamada calcular_aumento(codigo, salario) que receba o código do cargo e o salário atual, e retorne o valor do aumento e o novo salário.*
+*1. Implemente uma função chamada calcular_aumento(codigo, salario) que receba o código do cargo e o salário atual, e retorne o valor do aumento e o novo salário.*
 
 ```{r}
 
 # Função para calcular o aumento de salário
 calcular_aumento <- function(codigo, salario) {
   # Verifica se o código do cargo é válido
-  if (codigo < 1 || codigo > 5) {
+  if (is.na(codigo) || codigo < 1 || codigo > 5) {
     stop("Código inválido. O código deve estar entre 1 e 5.")
   }
   
   # Verifica se o salário é válido
-  if (salario <= 0) {
+  if (is.na(salario) || salario <= 0) {
     stop("Salário inválido. O salário deve ser maior que zero.")
   }
   
@@ -120,9 +119,14 @@ calcular_aumento <- function(codigo, salario) {
   return(list(aumento = aumento, novo_salario = novo_salario))
 }
 
-# Leitura dos dados
+# Leitura dos dados com validação adicional
 codigo <- as.numeric(readline(prompt = "Digite o código do cargo (1 a 5): "))
 salario <- as.numeric(readline(prompt = "Digite o salário atual: "))
+
+# Valida se a entrada foi bem-sucedida
+if (is.na(codigo) || is.na(salario)) {
+  stop("Por favor, insira valores numéricos válidos para o código e salário.")
+}
 
 # Chama a função para calcular o aumento
 resultado <- calcular_aumento(codigo, salario)
@@ -134,7 +138,7 @@ cat("Novo salário: R$", round(resultado$novo_salario, 2), "\n")
 
 ```
 
-*2.  Aplique a função sobre uma lista de funcionários com diferentes cargos e salários, e exiba os resultados.*
+*2. Aplique a função sobre uma lista de funcionários com diferentes cargos e salários, e exiba os resultados.*
 
 ```{r}
 funcionarios <- data.frame(
@@ -156,7 +160,6 @@ funcionarios <- cbind(funcionarios, resultado)
 ## Questão 3
 
 ### Um indivíduo possui três meios de transporte e escolhe o mais apropriado com base nas condições abaixo:
-
 
 1.  Escolha do meio de transporte com base na distância:
 
@@ -210,7 +213,6 @@ escolher_combustivel <- function(preco_gasolina, preco_etanol, preco_gnv) {
 }
 ```
 
-
 3.  Utilize as funções para responder:
 
 -   Qual transporte e combustível o indivíduo deve escolher para ir:
@@ -243,23 +245,21 @@ cat("Araucária (25 km): Transporte:", transporte_araucaria, "\n")
 
 ### Crie uma matriz ( M ) ( 10 \times 10 ) preenchida com números aleatórios entre 1 e 100. Desenvolva as seguintes funções para manipular a matriz:
 
+1.  soma_linha(matriz, linha) - Calcula a soma dos elementos de uma linha específica.
 
-1. soma_linha(matriz, linha) - Calcula a soma dos elementos de uma linha específica.
+2.  soma_coluna(matriz, coluna) - Calcula a soma dos elementos de uma coluna específica.
 
-2. soma_coluna(matriz, coluna) - Calcula a soma dos elementos de uma coluna específica.
-
-3. diagonal_principal(matriz) - Retorna os elementos da diagonal principal.
+3.  diagonal_principal(matriz) - Retorna os elementos da diagonal principal.
 
 4 diagonal_secundaria(matriz) - Retorna os elementos da diagonal secundária.
 
-
 *Teste todas as funções percorrendo a matriz. Mostre*:
 
-- A soma dos elementos de cada linha.
+-   A soma dos elementos de cada linha.
 
-- A soma dos elementos de cada coluna.
+-   A soma dos elementos de cada coluna.
 
-- Os elementos da diagonal principal e secundária.
+-   Os elementos da diagonal principal e secundária.
 
 ```{r}
 # Criar matriz M 10x10 com números aleatórios entre 1 e 100
@@ -317,9 +317,9 @@ print(diagonal_secundaria(M))
 
 ### Implemente um programa para determinar se uma matriz é simétrica. Para isso:
 
-1. Crie a função verificar_simetria(matriz) que receba uma matriz quadrada e retorne se ela é simétrica ou não.
+1.  Crie a função verificar_simetria(matriz) que receba uma matriz quadrada e retorne se ela é simétrica ou não.
 
-2. Preencha a matriz com valores aleatórios e verifique sua simetria.
+2.  Preencha a matriz com valores aleatórios e verifique sua simetria.
 
 ```{r}
 # Função para verificar se a matriz é simétrica
@@ -361,13 +361,13 @@ print(resultado)
 
 ### Implemente um programa para calcular as seguintes operações sobre uma matriz de números inteiros ( M ) ( 5 \times 5 ):
 
-1. maior_valor(matriz) - Retorna o maior valor contido na matriz.
+1.  maior_valor(matriz) - Retorna o maior valor contido na matriz.
 
-2. menor_valor(matriz) - Retorna o menor valor contido na matriz.
+2.  menor_valor(matriz) - Retorna o menor valor contido na matriz.
 
-3. media_geral(matriz) - Retorna a média aritmética de todos os elementos da matriz.
+3.  media_geral(matriz) - Retorna a média aritmética de todos os elementos da matriz.
 
-4. Aplique as funções sobre a matriz e exiba os resultados.
+4.  Aplique as funções sobre a matriz e exiba os resultados.
 
 ```{r}
 # Função para calcular o maior valor da matriz
@@ -412,9 +412,9 @@ cat("Média geral da matriz: ", media, "\n")
 
 ### Dado um vetor ( V ) contendo 100 elementos aleatórios entre 1 e 1.000:
 
-1. Crie uma função par_impar(vetor) que retorne dois vetores: um contendo apenas os números pares e outro com os números ímpares.
+1.  Crie uma função par_impar(vetor) que retorne dois vetores: um contendo apenas os números pares e outro com os números ímpares.
 
-2. Aplique a função sobre ( V ) e calcule a média dos elementos pares e ímpares separadamente.
+2.  Aplique a função sobre ( V ) e calcule a média dos elementos pares e ímpares separadamente.
 
 ```{r}
 # Função para separar os números pares e ímpares
@@ -448,11 +448,11 @@ cat("Média dos elementos ímpares: ", media_impares, "\n")
 
 ### Dada uma matriz ( N ) ( 6 \times 6 ), implemente um programa para encontrar:
 
-1. A soma dos elementos acima da diagonal principal.
+1.  A soma dos elementos acima da diagonal principal.
 
-2. A soma dos elementos abaixo da diagonal principal.
+2.  A soma dos elementos abaixo da diagonal principal.
 
-3. Implemente as funções soma_acima_diagonal(matriz) e soma_abaixo_diagonal(matriz) e aplique sobre ( N ).
+3.  Implemente as funções soma_acima_diagonal(matriz) e soma_abaixo_diagonal(matriz) e aplique sobre ( N ).
 
 ```{r}
 # Função para calcular a soma dos elementos acima da diagonal principal
@@ -497,28 +497,27 @@ cat("Soma dos elementos abaixo da diagonal principal: ", soma_abaixo, "\n")
 
 ```
 
-
 ## Questão 9
 
 1 Crie uma função que calcula o fatorial de um número ( n ).
 
-2. Crie uma função que dado um número, retorna o número primo mais próximo.
+2.  Crie uma função que dado um número, retorna o número primo mais próximo.
 
-3. Crie uma função que dado um número, retorna o número quadrado perfeito mais próximo.
+3.  Crie uma função que dado um número, retorna o número quadrado perfeito mais próximo.
 
-4. Crie uma função que dado um número, retorna o resto da divisão por 3.
+4.  Crie uma função que dado um número, retorna o resto da divisão por 3.
 
-5. Varra uma matriz de 20x20 com números aleatórios entre 1 e 1000 e aplique as funções criadas sobre cada elemento da matriz segundo as seguintes regras:
+5.  Varra uma matriz de 20x20 com números aleatórios entre 1 e 1000 e aplique as funções criadas sobre cada elemento da matriz segundo as seguintes regras:
 
-+ Se o número for par e menor do que 10, aplique a função do fatorial.
+-   Se o número for par e menor do que 10, aplique a função do fatorial.
 
-+ Se o número for ímpar, aplique a função do número primo mais próximo.
+-   Se o número for ímpar, aplique a função do número primo mais próximo.
 
-+ Se o número for maior do que 10 e menor do que 100, aplique a função do número quadrado perfeito mais próximo.
+-   Se o número for maior do que 10 e menor do que 100, aplique a função do número quadrado perfeito mais próximo.
 
-+ Se o número for maior do que 100, aplique a função do resto da divisão por 3.
+-   Se o número for maior do que 100, aplique a função do resto da divisão por 3.
 
-+ Retorne 0 caso contrário.
+-   Retorne 0 caso contrário.
 
 ```{r}
 # Função para calcular o fatorial de um número
@@ -604,4 +603,3 @@ cat("\nMatriz com resultados aplicados:\n")
 print(matriz_resultado)
 
 ```
-

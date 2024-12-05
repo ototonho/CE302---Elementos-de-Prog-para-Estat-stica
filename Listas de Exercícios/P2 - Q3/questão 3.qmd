@@ -1,0 +1,152 @@
+---
+title: "Questão 3 - P2"
+format: pdf
+editor: visual
+theme: lux
+fontcolor: "#212121"
+---
+
+## Questão 3
+
+O *Lago Baikal*, na Rússia, é famoso por sua abundância de nutrientes e por sua beleza natural, sendo lar da espécie de peixe Omul do Baikal (Coregonus migratorius). O lago pode suportar uma capacidade máxima de 5 × 105 peixes e apresenta uma taxa de reprodução basal de 6% ao dia.
+
+Essa taxa de reprodução varia de acordo com a temperatura média da estação do ano, conforme a Tabela 1. Além disso, o pH da água afeta o comportamento dos pescadores, que pescam diferentes porcentagens de peixes por dia, conforme a Tabela 2.
+
+| Estacao | Temperatura | FatorReproducao |
+|---------|-------------|-----------------|
+| Pri     | 0           | 0.00            |
+| Ver     | 20          | 0.03            |
+| Out     | 10          | -0.03           |
+| Inv     | 0           | -0.02           |
+
+| FaixaPH | PercentualPescado |
+|---------|-------------------|
+| 6.0–6.5 | 0.12              |
+| 6.6–7.0 | 0.20              |
+| 7.1–7.5 | 0.05              |
+| 7.6–8.0 | 0.16              |
+
+No entanto, a pesca excessiva e a poluição têm afetado a população de peixes no lago. Hoje, têm-se 80 peixes no lago, e um programa de monitoramento foi implementado para avaliar o impacto dessas variáveis na população de peixes.
+
+### Sua Tarefa
+
+1.  Crie uma função chamada simular_lago que receba como entrada os seguintes parâmetros:
+
+-   dias: Número de dias do experimento.
+
+-   peixes_iniciais: Número inicial de peixes no lago.
+
+-   estacao: Estação do ano (Primavera, Verão, Outono ou Inverno).
+
+-   ph: pH médio da água durante o experimento.
+
+2.  A função deve calcular:
+
+-   O número de peixes no lago a cada dia.
+
+-   O número de dias até o lago atingir sua capacidade máxima ou o número final de peixes ao fim do período definido por dias.
+
+3.  Saída esperada:
+
+-   Um data frame com duas colunas: dias e peixes, onde dias é o número do dia e peixes é o número de peixes no lago naquele dia.
+
+### Fórmula
+
+A cada dia, o número de peixes é calculado como:
+
+Peixes no próximo dia=Peixes atuais×(1+taxa de reprodução ajustada)−peixes pescados
+
+Onde:
+
+Taxa de reprodução ajustada:
+
+Taxa basal+fator de ajuste da Tabela 1.
+
+Peixes pescados:
+
+Peixes atuais×porcentagem de peixes pescados (Tabela 2).
+
+Observação: O número de peixes nunca pode exceder a capacidade máxima do lago, e o número máximo de dias que os pesquisadores irão quantificar os peixes é 1000 dias. Além disso, contagem de peixes é sempre um número inteiro, considere sempre arredondar para cima.
+
+a)  Durante a estação Verão e com pH médio da água de 6.6–7.0, após 16 dias, quantos peixes haverá no lago?
+
+b)  Durante a estação Verão e com pH médio da água de 6.6–7.0, quantos dias são necessários para o lago atingir sua capacidade máxima?
+
+c)  Durante a estação Outono e com pH médio da água de 6.0–6.5, após 87 dias, quantos peixes haverá no lago?
+
+d)  Durante a estação Outono e com pH médio da água de 6.0–6.5, quantos dias são necessários para o lago atingir sua capacidade máxima?
+
+```{r}
+# Variáveis fixas
+taxa_basal <- 0.06
+capacidade_maxima <- 5 * 10^5
+
+fator_reproducao <- list(
+  Pri = 0.00,
+  Ver = 0.03,
+  Out = -0.03,
+  Inv = -0.02
+)
+
+percentual_pescado <- list(
+  "6.0–6.5" = 0.12,
+  "6.6–7.0" = 0.20,
+  "7.1–7.5" = 0.05,
+  "7.6–8.0" = 0.16
+)
+
+# Função principal
+simular_lago <- function(dias, peixes_iniciais, estacao, ph) {
+  # Validar os parâmetros de entrada
+  if (!(estacao %in% names(fator_reproducao))) {
+    stop("Estação inválida!")
+  }
+  if (!(ph %in% names(percentual_pescado))) {
+    stop("pH inválido!")
+  }
+  
+  taxa_reproducao_ajustada <- taxa_basal + fator_reproducao[[estacao]]
+  perc_pescado <- percentual_pescado[[ph]]
+  
+  # Inicializar a simulação
+  peixes <- peixes_iniciais
+  resultado <- data.frame(dias = integer(), peixes = integer())
+  
+  for (dia in 1:dias) {
+    # Calcular peixes pescados
+    peixes_pescados <- ceiling(peixes * perc_pescado)
+    # Calcular nova população
+    peixes <- ceiling(peixes * (1 + taxa_reproducao_ajustada) - peixes_pescados)
+    # Garantir que não ultrapasse a capacidade máxima
+    peixes <- min(peixes, capacidade_maxima)
+    # Registrar o resultado
+    resultado <- rbind(resultado, data.frame(dias = dia, peixes = peixes))
+    # Parar se atingir a capacidade máxima
+    if (peixes == capacidade_maxima) {
+      break
+    }
+  }
+  
+  return(resultado)
+}
+
+# Responder às questões
+# a) Estação: Verão, pH: 6.6–7.0, dias: 16
+resultado_a <- simular_lago(dias = 16, peixes_iniciais = 80, estacao = "Ver", ph = "6.6–7.0")
+cat("a) Após 16 dias:", tail(resultado_a$peixes, 1), "peixes\n")
+
+# b) Estação: Verão, pH: 6.6–7.0, dias até capacidade máxima
+resultado_b <- simular_lago(dias = 1000, peixes_iniciais = 80, estacao = "Ver", ph = "6.6–7.0")
+dias_b <- resultado_b[resultado_b$peixes == capacidade_maxima, "dias"]
+cat("b) Dias até capacidade máxima:", ifelse(length(dias_b) > 0, dias_b[1], "Não atingiu"), "\n")
+
+# c) Estação: Outono, pH: 6.0–6.5, dias: 87
+resultado_c <- simular_lago(dias = 87, peixes_iniciais = 80, estacao = "Out", ph = "6.0–6.5")
+cat("c) Após 87 dias:", tail(resultado_c$peixes, 1), "peixes\n")
+
+# d) Estação: Outono, pH: 6.0–6.5, dias até capacidade máxima
+resultado_d <- simular_lago(dias = 1000, peixes_iniciais = 80, estacao = "Out", ph = "6.0–6.5")
+dias_d <- resultado_d[resultado_d$peixes == capacidade_maxima, "dias"]
+cat("d) Dias até capacidade máxima:", ifelse(length(dias_d) > 0, dias_d[1], "Não atingiu"), "\n")
+
+```
