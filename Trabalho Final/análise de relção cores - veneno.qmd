@@ -1,23 +1,50 @@
-##Trabalho Final, Antonio
+---
+title: "Trabalho Final - Análise das cores em função de comestibilidade"
+format: html
+editor: visual
+---
 
-install.packages("dplyr")
+## Análise das cores em função de comestibilidade
 
-library(dplyr)
+Etapas da análise:{#sec-01}
+
+0.  [Organização dos dados] [Clique aqui](#sec-02)
+
+-   importar e tratar os dados
+
+1.  Estatística descritiva [Clique aqui](#sec-03)
+
+-   Medidas de posição e frequência;
+
+2.  Testes de variação, variância {#sec-04}
+
+-   Variância, qui-quadrado e esperança
+
+3.  Dispersão e assimetria {#sec-05}
+
+-   distância interquartílica e curtose
+
+4.  Regressão
+
+-   testar relação entre variáveis com base no que foi visto
+
+5.  Conclusão
+
+##Organização dos Dados {#sec-02}
+
+Etapa de organização e tratamento dos dados. [Sumário](#sec-01)
+
+```{r}
 library(tidyverse)
-
 library(Hmisc)
+library(dplyr)
 library(gridExtra)
 library(grid)
 library(reshape2)
-
 df <- read.csv("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Trabalho Final/one_million_mushrooms.csv/one_million_mushrooms.csv", sep = ";")
 
 names(df) <- gsub("-","_",names(df))
-View(df)
-head(df)
-glimpse(df)
 
-##alterando a tabela
 df <- df %>%
   mutate(
     class = case_when(
@@ -200,7 +227,25 @@ df <- df %>%
   )
 View(head(df))
 View(df)
+```
 
+
+##Descrição dos Dados {#sec-03}
+
+Inicialmente, faz-se pertinente demonstrar, também, como se apresentam algumas medidas importantes para o entendimento da distribuição de cores por classe.
+
+```{r}
+summary(df)
+
+describe(df$cap.color)
+
+```
+
+Temos, portanto, as proporções e contagens exatas para cada observação.
+
+Agora, a motivo de exemplificação, listamos abaixo algumas contagens de frequência de cores por cada parte dos cogumelos que apresentam coloração. Seguindo a direção da análise, as frequências são divididas de acordo com as classes dos cogumelos.
+
+```{r}
 #agrupando e criando amostra
 amostra_veneno <- df %>% sample_n(15000)
 cor_chapéu <- amostra_veneno %>%
@@ -318,73 +363,88 @@ grid.arrange(
     g1, g2, g3, g4, ncol = 2,
     top = textGrob("As quatro distribuições de cores", gp = gpar(fontsize = 16, fontface = "bold"))
   ))
+```
 
+##Corelação entre as distribuições
+É perceptível como algumas cores do himênio e do estipe acompanham suas respectivas do chapéu. Mas para que se possa visualizar melhor este movimento, cabe alguns testes de correlação.
+
+```{r}
+##Correlação entre as distribuições
 amostra_veneno_num <- amostra_veneno %>%
-  mutate(across(c(cap_color, gill_color, veil_color, stem_color), 
+  mutate(across(c(cap.color, gill.color, veil.color, stem.color), 
                 ~ as.numeric(factor(.))))
 
 correlacao_por_classe <- amostra_veneno_num %>%
-  select(cap_color, gill_color, veil_color, stem_color, class) %>%
-  group_by(class) %>%
+  select(cap.color, gill.color, veil.color, stem.color, class) %>%  # Selecionar as colunas de interesse
+  group_by(class) %>%  # Agrupar por 'class'
   summarise(
-    cor = list(cor(across(c(cap_color, gill_color, veil_color, stem_color)))),
+    cor = list(cor(across(c(cap.color, gill.color, veil.color, stem.color)))),  # Calcular a correlação para as colunas selecionadas
     .groups = "drop"
   )
 
-# Extração das correlações
+print(correlacao_por_classe)
+
+# extraindo a correlação para 'edible'
 cor_edible <- correlacao_por_classe$cor[[1]]
+
+# visualizando a correlação
+print(cor_edible)
+
+#extraindo a correlação para 'poisonous'
 cor_poisonous <- correlacao_por_classe$cor[[2]]
 
-# Convertendo para long format
+# visualizando a correlação'
+print(cor_poisonous)
+
+#Conversão para long-format
 cor_edible_melt <- melt(cor_edible)
 cor_poisonous_melt <- melt(cor_poisonous)
 
-# Adicionando coluna para a classe
+##adicionando coluna para classe
 cor_edible_melt$class <- "edible"
 cor_poisonous_melt$class <- "poisonous"
+combined_cor <- rbind(cor_edible_melt, cor_poisonous_melt) ##união
+g5 <- ggplot(combined_cor, aes(Var1, Var2, fill = value)) + #gráfico
+  geom_tile() +
+  facet_wrap(~ class) +  # Create a facet for each class
+  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  # Color scale for the correlation
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate axis labels
+  labs(title = "Correlation Matrices: Edible vs Poisonous", x = "Variable", y = "Variable") +
+  coord_fixed(ratio = 1)
 
-combined_cor <- rbind(cor_edible_melt, cor_poisonous_melt)
+g5
+```
 
-# Excluindo a diagonal para "sem diagonal"
+
+```{r}
+# Excluindo a diagonal
 cor_cores_filtrado <- combined_cor %>%
   filter(Var1 != Var2)
 
-# Criando gráficos separados
-g5_edible <- ggplot(cor_edible_melt, aes(Var1, Var2, fill = value)) + 
+# Gráfico sem a diagonal
+g5_filtrado <- ggplot(cor_cores_filtrado, aes(Var1, Var2, fill = value)) +
   geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") + 
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  labs(title = "Matriz de Correlação Completa: Edible", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-g5_poisonous <- ggplot(cor_poisonous_melt, aes(Var1, Var2, fill = value)) + 
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") + 
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  labs(title = "Matriz de Correlação Completa: Poisonous", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-g5_edible_S_diagonal <- ggplot(cor_cores_filtrado %>% filter(class == "edible"), aes(Var1, Var2, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  
+  facet_wrap(~ class) +  # Facet by class
+  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  # Color scale
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(title = "Matriz de Correlação (Sem Diagonal): Edible", x = "Coloração", y = "Coloração") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate axis labels
+  labs(
+    title = "Matrizes de correlação (sem diagonal): Edible vs Poisonous",
+    x = "Coloração",
+    y = "Coloração"
+  ) +
   coord_fixed(ratio = 1)
 
-g5_poisonous_S_diagonal <- ggplot(cor_cores_filtrado %>% filter(class == "poisonous"), aes(Var1, Var2, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(title = "Matriz de Correlação (Sem Diagonal): Poisonous", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
+g5_filtrado
 
-# Agora, os gráficos são objetos separados, você pode exibi-los como quiser:
-g5_edible
-g5_poisonous
-g5_edible_S_diagonal
-g5_poisonous_S_diagonal
+```
 
+
+As matrizes demonstram como estipe, himênio e chapéu se relacionam, ao mesmo tempo em que a coloração do véu não apresenta relação alguma com os outros três. Além disso, as correlações são levemente mais fortes nos cogumelos comestíveis.
+
+
+
+##Testes de variação
+
+Aqui fazemos teste de variação, variância e eseperança.

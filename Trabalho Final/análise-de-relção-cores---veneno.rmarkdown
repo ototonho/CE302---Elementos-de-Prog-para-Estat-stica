@@ -1,23 +1,49 @@
-##Trabalho Final, Antonio
+---
+title: "Trabalho Final - Análise das cores em função de comestibilidade"
+format: html
+editor: visual
+---
 
-install.packages("dplyr")
 
-library(dplyr)
+
+## Análise das cores em função de comestibilidade
+
+Etapas da análise:{#sec-01}
+
+0.  \[Organização dos dados\] [Clique aqui](#sec-02)
+
+-   importar e tratar os dados
+
+1.  Estatística descritiva [Clique aqui](#sec-03)
+
+-   Medidas de posição e frequência;
+
+2.  Testes de variação, variância {#sec-04}
+
+-   Variância, qui-quadrado e esperança
+
+3.  Dispersão e assimetria {#sec-05}
+
+-   distância interquartílica e curtose
+
+4.  Regressão
+
+-   testar relação entre variáveis com base no que foi visto
+
+5.  Conclusão
+
+##Organização dos Dados {#sec-02}
+
+Etapa de organização e tratamento dos dados. [Sumário](#sec-01)
+
+
+
+```{r}
 library(tidyverse)
-
-library(Hmisc)
-library(gridExtra)
-library(grid)
-library(reshape2)
-
 df <- read.csv("C:/Users/anton/Desktop/Área de Trabalho/Estatística/CE302/CE302---Elementos-de-Prog-para-Estat-stica/Trabalho Final/one_million_mushrooms.csv/one_million_mushrooms.csv", sep = ";")
 
 names(df) <- gsub("-","_",names(df))
-View(df)
-head(df)
-glimpse(df)
 
-##alterando a tabela
 df <- df %>%
   mutate(
     class = case_when(
@@ -200,19 +226,29 @@ df <- df %>%
   )
 View(head(df))
 View(df)
+```
 
+
+
+##Descrição dos Dados {#sec-03}
+
+Nesta etapa serão feitas as medidas iniciais de com relação a frequência e medidas de posição. Abaixo, podemos conferir a frequência de ocorrência de cada cor em função da classe do cogumelo.
+
+
+
+```{r}
 #agrupando e criando amostra
 amostra_veneno <- df %>% sample_n(15000)
-cor_chapéu <- amostra_veneno %>%
+
+#Veneno x Não-veneno
+cor_veneno <- amostra_veneno %>%
   group_by(class, cap.color) %>%
-  summarise(count = n(), .groups = "drop") %>%
+  summarize(count = n(), .groups = "drop") %>%
   mutate(proportions = count/ sum(count))
 
-View(cor_chapéu)
+##Frequência das cores por cada uma das classes
 
-##Distribuição de cores do chapéu por classe
-
-g1 <- ggplot(cor_chapéu, aes(x = cap.color, y = count, fill = class)) +
+g1 <- ggplot(cor_veneno, aes(x = cap.color, y = count, fill = class)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_manual(
     values = c(
@@ -221,7 +257,7 @@ g1 <- ggplot(cor_chapéu, aes(x = cap.color, y = count, fill = class)) +
     )
   ) +
   labs(
-    title = "Frequência de cores do chapéu por classe",
+    title = "Frequência de cores por classe",
     x = "Classe",
     y = "Frequência",
     fill = "Cor"
@@ -230,161 +266,26 @@ g1 <- ggplot(cor_chapéu, aes(x = cap.color, y = count, fill = class)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 g1
+```
 
-##Distribuição de cores do himênio por classe
-cor_himenio <- amostra_veneno %>%
-  group_by(class, gill.color) %>%
-  summarise(count = n(), .groups = "drop") %>%
-  mutate(proportions = count/ sum(count))
 
-View(cor_himenio)
 
-g2 <- ggplot(cor_himenio, aes(x = gill.color, y = count, fill = class)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(
-    values = c(
-      "edible" = "#ffcc80",
-      "poisonous" = "#388e3c"
-    )
-  ) +
-  labs(
-    title = "Frequência de cores do himênio por classe",
-    x = "Classe",
-    y = "Frequência",
-    fill = "Cor"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+Além disso, faz-se pertinente demonstrar, também, como se apresentam algumas medidas importantes para o entendimento da distribuição de cores por classe.
 
-g2
 
-##Distribuição de cores do véu por classe
-cor_véu <- amostra_veneno %>%
-  group_by(class, veil.color) %>%
-  summarise(count = n(), .groups = "drop") %>%
-  mutate(proportions = count/ sum(count))
 
-View(cor_véu)
+```{r}
+summary(df)
 
-g3 <- ggplot(cor_véu, aes(x = veil.color, y = count, fill = class)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(
-    values = c(
-      "edible" = "#ffcc80",
-      "poisonous" = "#388e3c"
-    )
-  ) +
-  labs(
-    title = "Frequência de cores do véu por classe",
-    x = "Classe",
-    y = "Frequência",
-    fill = "Cor"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+describe(df$cap.color)
 
-g3
+```
 
-##Distribuição de cores do estipe por classe
-cor_estipe <- amostra_veneno %>%
-  group_by(class, stem.color) %>%
-  summarise(count = n(), .groups = "drop") %>%
-  mutate(proportions = count/ sum(count))
 
-View(cor_estipe)
 
-g4 <- ggplot(cor_estipe, aes(x = stem.color, y = count, fill = class)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  scale_fill_manual(
-    values = c(
-      "edible" = "#ffcc80",
-      "poisonous" = "#388e3c"
-    )
-  ) +
-  labs(
-    title = "Frequência de cores do estipe por classe",
-    x = "Classe",
-    y = "Frequência",
-    fill = "Cor"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+Temos, portanto, as proporções e contagens exatas para cada observação.
 
-g4
+##Testes de variação
 
-## Gráficos facetados
-grid.arrange(
-  arrangeGrob(
-    g1, g2, g3, g4, ncol = 2,
-    top = textGrob("As quatro distribuições de cores", gp = gpar(fontsize = 16, fontface = "bold"))
-  ))
-
-amostra_veneno_num <- amostra_veneno %>%
-  mutate(across(c(cap_color, gill_color, veil_color, stem_color), 
-                ~ as.numeric(factor(.))))
-
-correlacao_por_classe <- amostra_veneno_num %>%
-  select(cap_color, gill_color, veil_color, stem_color, class) %>%
-  group_by(class) %>%
-  summarise(
-    cor = list(cor(across(c(cap_color, gill_color, veil_color, stem_color)))),
-    .groups = "drop"
-  )
-
-# Extração das correlações
-cor_edible <- correlacao_por_classe$cor[[1]]
-cor_poisonous <- correlacao_por_classe$cor[[2]]
-
-# Convertendo para long format
-cor_edible_melt <- melt(cor_edible)
-cor_poisonous_melt <- melt(cor_poisonous)
-
-# Adicionando coluna para a classe
-cor_edible_melt$class <- "edible"
-cor_poisonous_melt$class <- "poisonous"
-
-combined_cor <- rbind(cor_edible_melt, cor_poisonous_melt)
-
-# Excluindo a diagonal para "sem diagonal"
-cor_cores_filtrado <- combined_cor %>%
-  filter(Var1 != Var2)
-
-# Criando gráficos separados
-g5_edible <- ggplot(cor_edible_melt, aes(Var1, Var2, fill = value)) + 
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") + 
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  labs(title = "Matriz de Correlação Completa: Edible", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-g5_poisonous <- ggplot(cor_poisonous_melt, aes(Var1, Var2, fill = value)) + 
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") + 
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  labs(title = "Matriz de Correlação Completa: Poisonous", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-g5_edible_S_diagonal <- ggplot(cor_cores_filtrado %>% filter(class == "edible"), aes(Var1, Var2, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(title = "Matriz de Correlação (Sem Diagonal): Edible", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-g5_poisonous_S_diagonal <- ggplot(cor_cores_filtrado %>% filter(class == "poisonous"), aes(Var1, Var2, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  
-  labs(title = "Matriz de Correlação (Sem Diagonal): Poisonous", x = "Coloração", y = "Coloração") +
-  coord_fixed(ratio = 1)
-
-# Agora, os gráficos são objetos separados, você pode exibi-los como quiser:
-g5_edible
-g5_poisonous
-g5_edible_S_diagonal
-g5_poisonous_S_diagonal
+Aqui fazemos teste de variação, variância e eseperança.
 
