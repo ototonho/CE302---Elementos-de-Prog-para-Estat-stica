@@ -1,0 +1,1095 @@
+---
+title: "Trabalho Final - Elementos de programação para Estatística"
+format: html
+editor: visual
+text-align: center
+number-sections: true
+bibliography: referencias.bib
+---
+
+Antonio Paulo Steffen Neto
+
+Beatriz Amalia de Oliveira
+
+Giulia Vitória Evangelista do Amaral
+
+Jhullya da Rosa Shalders
+
+Victor Mancia Taouil
+
+## Resumo
+
+O presente trabalho tem por objetivo a análise de um conjunto de dados com mais de um milhão de registros de cogumelos. As informações à disposição giram em torno de diversas características anatômicas e morfológicas e suas respectivas combinações. Assim, a análise a ser apresentada tem como intuito demonstrar a ampla gama de variedades dentro do vasto mundo dos cogumelos, tocando aspectos desde características físicas até distribuição geográfica e convergindo para a questão de ser ou não comestíveis.
+
+Palavras-chave: Cogumelos. Análise Exploratória.
+
+## Introdução
+
+Os cogumelos são parte importante na cultura humana ao longo da história e ainda no presente. Têm papel importante na culinária, também na medicina e até na construção civil de diversas comunidades humanas e constituem um mercado grande dentro das economias atuais. Este trabalho tem como objetivo a apresentação de uma análise de um conjunto de dados descritivos sobre cogumelos. Contudo, o foco principal dos resultados a serem apresentados têm caráter mais descritivo do que necessariamente reflexivo ou de problematização. 
+
+Antes, contudo, cabe a esta introdução a tarefa de apresentar a estrutura do trabalho, bem como contextualizar o tópico de estudo. Sendo assim, será feita uma breve apresentação sobre fungos e cogumelos, antes de serem trazidos os números estudados. Esta tem por objetivo a contextualização do tema ao leitor e também uma primeira explicação de certas nomenclaturas que serão exploradas na parte de análise em si. Após este primeiro trecho, serão apresentadas, também, as metodologias e uma breve revisão de literatura, antes da análise em si.
+
+Sem mais delongas, apresentamos os protagonistas do trabalho. Os cogumelos fazem parte do reino Fungi, como descrito por Whittaker (1969) [@whitaker1970], compreendendo os filos Ascomycota e Basidiomycota, os dois únicos capazes de apresentar estruturas macroscópicas complexas. Ao todo, de acordo com Drechsler (2015) [@drechsler2015], existem em torno de 100.000 espécies dentre os dois filos supracitados, dentre estas estão inseridos os cogumelos. 
+
+Os cogumelos se diferenciam dos outros grupos de fungos, em especial, por sua complexidade, tamanho e diferentes estruturas de reprodução. Estas, inclusive, são possíveis de serem identificadas a olho nu e estão presentes na base de dados deste trabalho. Os filos Ascomycota e Basidiomycota diferenciam-se entre si na apresentação do esporocarpo, que forma ascas, no caso do primeiro, ou basídios, no do segundo. O segundo tipo é o que concentra a maior parte dos cogumelos que conhecemos, pois é o filo mais complexo. Dentro do filo Ascomycota, por outro lado, encontram-se trufas, bolores e leveduras e ainda alguns tipos de cogumelos menos complexos (Drechsler, 2015). [@drechsler2015]
+
+Abaixo uma ilustração de como é a morfologia de um cogumelo:
+
+![Anatomia de um cogumelo. Fonte: Mycology Start](https://mycologyst.art/images/identification/mushroom-anatomy.png){width="509"}
+
+Segundo Chowdhury e Ojha (2017) [@ojha2017],estima-se que 45000 espécies de cogumelos estejam identificadas ao redor do mundo. Porém, identificados como comestíveis, seriam somente 2000.
+
+Dada a importância dos cogumelos para as mais variadas áreas do conhecimento, ter a capacidade de identificar se o cogumelo é venenoso ou não, torna-se indispensável para o progresso de estudos. Contudo, essa identificação não é trivial, portanto, a utilização de dados para tal tarefa é de extrema importância.
+
+Nesse estudo procuramos analisar, ainda que de maneira simples, as variáveis que tendem a ser mais acertivas e primordiais na classificação de cogumelos entre comestíveis ou venenosos.
+
+### Descrição do conjunto de dados
+
+O conjunto de dados utilizado neste trabalho consiste, de informações sintéticas e descritivas de cogumelos, sobretudo do filo Basidiomycota. Nele, há descrições anatômicas e de outras características como cor e toxicidade. Há variáveis referentes à presença de anéis e véus, por exemplo, estruturas exclusivamente encontradas em Basidiomycota, assim como a presença de cores mais chamativas e estruturas de fixação do himênio. Os dados utilizados na análise podem ser encontrados em [Dados](https://www.kaggle.com/datasets/carlmcbrideellis/tertiary-mushroom-1-million-more-mushrooms).
+
+Como citado anteriormente, os dados utilizados na análise tem origem sintética e para a sua criação tem como base o estudo *The Audubon Society Field Guide to North American Mushrooms*, feito por G.H. Lincoff [@lincoff2019] e disponível em [UCI machine learning repository.](#0) O banco de dados original contém 8124 registros e 22 atributos de 23 espécies diferentes de cogumelos que se encontram nas famílias *Agaricus and Lepiota* (pp. 500-525) com duas classes possíveis, comestível (edible) ou venenoso (poisonous). Os atributos dos cogumelos estão descritos baixo.
+
+| Coluna | Descrição |
+|------------------------------------|------------------------------------|
+| `class` | Classe do cogumelo (comestível ou venenoso). |
+| `cap-diameter` | Diâmetro do píleo (em centímetros, por exemplo). |
+| `cap-shape` | Formato do píleo (e.g., convexo, plano, etc.). |
+| `cap-surface` | Superfície do píleo (e.g., lisa, fibrosa, escamosa). |
+| `cap-color` | Cor do píleo (e.g., marrom, amarelo, vermelho). |
+| `does-bruise-or-bleed` | Indica se oxida ou sangra ao ser danificado. |
+| `gill-attachment` | Fixação do himênio (e.g., aderente, livre). |
+| `gill-spacing` | Espaçamento do himênio (e.g., próximas, distantes). |
+| `gill-color` | Cor do himênio (e.g., branco, rosa, marrom). |
+| `stem-height` | Altura do estipe (em centímetros, por exemplo). |
+| `stem-width` | Largura do estipe (em centímetros, por exemplo). |
+| `stem-root` | Tipo de raiz do estipe (e.g., bulbosa, uniforme). |
+| `stem-surface` | Superfície do estipe (e.g., lisa, fibrosa, sedosa). |
+| `stem-color` | Cor do estipe (e.g., marrom, bege, branco). |
+| `veil-type` | Tipo de véu (parcial ou universal). |
+| `veil-color` | Cor do véu (e.g., branco, amarelo, laranja). |
+| `has-ring` | Indica se possui anel (sim ou não). |
+| `ring-type` | Tipo de anel (e.g., pendente, expansivo, evanescente). |
+| `spore-print-color` | Cor da impressão dos esporos (e.g., preto, marrom, roxo). |
+| `habitat` | Habitat onde o cogumelo cresce (e.g., floresta, gramado, urbano). |
+| `season` | Estação do ano em que o cogumelo aparece (e.g., primavera, verão). |
+
+: (Tabela 1) Descrição das colunas utilizadas na análise de cogumelos \[Fonte: Os Autores, 2024\].
+
+As colunas que continham registros qualitativos estavam resumidas a uma letra que representavam o valor dado àquele registro. Exemplo: na coluna season, existem 4 valores únicos: s,w,u,a. O valor S é sinônimo de spring (primavera). Com o objetivo de identificar melhor os dados e, por consequência, analisá-los melhor, foi utilizado o dicionário de dados disponível em [Dicionário.1](https://archive.ics.uci.edu/dataset/73/mushroom){.uri}
+
+O pré-processamento e tratamento dos dados está descrito na @sec-3
+
+## Metodologia {#sec-3}
+
+A metodologia apresentada a seguir é baseada na análise descritiva do conjunto de dados à disposição. O principal objetivo é o de entender a distribuição das variáveis à disposição e classificá-las com relação às classes apresentadas, isto é, se os cogumelos são comestíveis ou venenosos de acordo com as combinações das diferentes variáveis. Assim, o método empregado visa a identificação das variáveis que mais interferem, ou ainda, são mais assertivas na detecção da classe do cogumelo. A metodologia utilizada é baseada na linguagem de programação R e no conjunto de dados previamente citado, e se apoia no material apresentado na revisão de literatura. 
+
+A análise foi feita tendo como base técnicas estatísticas descritivas, como média e medidas de frequência e de dispersão, e a criação de gráficos que permitem melhor visualizar os resultados encontrados a fim de descrever e resumir os dados para que melhor possa-se identificar informações sobre as características de interesse, como é definido o objetivo de uma análise descritiva por Magalhães (2015). 
+
+A identificação dessas variáveis de interesse dar-se-á, para as variáveis quantitativa, pela análise da distribuição da variável dada a classe em que ela se encontra. Já para as qualitativas, será analisada a frequência da variável em cada uma das classes. Ao analisar os pontos acima citados, procuramos por diferenciações entre cogumelos venenosos e não venenosos.
+
+O trabalho foi realizado em etapas. A primeira tarefa teve como foco limpeza e organização dos dados. Após esta etapa, foram feitas suas subsequentes interpretação e análise a partir do emprego de medidas de posição e dispersão na plataforma RStudio, que permitiram ao grupo chegar às conclusões apresentadas na @sec-4 neste trabalho. Logo após, foram criados gráficos que permitiram aos integrantes melhor compreender os resultados atingidos. Por fim, os pontos mais importantes de toda a análise serão apresentados em um aplicativo Shiny.
+
+O primeiro obstáculo encontrado na análise dos dados foi a realização do pré-processamento. O conjunto dos dados tinha suas colunas nomeadas de maneira não amigável ao R. Isto é, com caracteres difíceis de lidar na programação. Além disso, os registros vinham anotados somente com uma única letra, que podia, ou não, ser sua inicial. Ambos os obstáculos foram tratados via código em R.
+
+```{r,  warning=FALSE, message = FALSE, echo = FALSE}
+require(data.table)
+require(dplyr)
+require(tidyverse)
+require(ggplot2)
+library(networkD3)
+library(gridExtra)
+library(grid)
+library(knitr)
+library(kableExtra)
+
+load("dados.RData")
+
+
+# Mudando o nome das colunas para garantir que fiquem com _ ao invés de - 
+names(df) <- gsub("-","_",names(df))
+
+
+# Vamos substituir os registros de acordo com o dicionário de dados. 
+# Caso não haja uma correspondência no nosso dicionário, substituiremos por unknown
+
+df <- df %>%
+  mutate(
+    class = case_when(
+      class == "e" ~ "Comestível",
+      class == "p" ~ "Venenoso",
+      TRUE ~ "Desconhecido"
+    ),
+    cap_shape = case_when(
+      cap_shape == "b" ~ "Campanulado",
+      cap_shape == "c" ~ "Cônico",
+      cap_shape == "x" ~ "Convexo",
+      cap_shape == "f" ~ "Plano",
+      cap_shape == "o" ~ "Umbonado",
+      cap_shape == "s" ~ "Umbilicado",
+      cap_shape == "p" ~ "Afundado",
+      TRUE ~ "Unknown"
+      
+    ),
+    cap_surface = case_when(
+      cap_surface == "f" ~ "fibrous",
+      cap_surface == "g" ~ "grooves",
+      cap_surface == "y" ~ "scaly",
+      cap_surface == "s" ~ "smooth",
+      TRUE ~ "Unknown"
+    ),
+    cap_color = case_when(
+      cap_color == "n" ~ "brown",
+      cap_color == "b" ~ "buff",
+      cap_color == "c" ~ "cinnamon",
+      cap_color == "g" ~ "gray",
+      cap_color == "r" ~ "green",
+      cap_color == "p" ~ "pink",
+      cap_color == "u" ~ "purple",
+      cap_color == "e" ~ "red",
+      cap_color == "w" ~ "white",
+      cap_color == "y" ~ "yellow",
+      TRUE ~ "Unknown"
+    ),
+    does_bruise_or_bleed = case_when(
+      does_bruise_or_bleed == "t" ~ "bruises",
+      does_bruise_or_bleed == "f" ~ "no",
+      TRUE ~ "Unknown"
+    ),
+    gill_attachment = case_when(
+      `gill_attachment` == "a" ~ "attached",
+      `gill_attachment` == "d" ~ "descending",
+      `gill_attachment` == "f" ~ "free",
+      `gill_attachment` == "n" ~ "notched",
+      TRUE ~ "Unknown"
+    ),
+    gill_spacing = case_when(
+      `gill_spacing` == "c" ~ "close",
+      `gill_spacing` == "w" ~ "crowded",
+      `gill_spacing` == "d" ~ "distant",
+      TRUE ~ "Unknown"
+    ),
+    gill_color = case_when(
+      `gill_color` == "k" ~ "black",
+      `gill_color` == "n" ~ "brown",
+      `gill_color` == "b" ~ "buff",
+      `gill_color` == "h" ~ "chocolate",
+      `gill_color` == "g" ~ "gray",
+      `gill_color` == "r" ~ "green",
+      `gill_color` == "o" ~ "orange",
+      `gill_color` == "p" ~ "pink",
+      `gill_color` == "u" ~ "purple",
+      `gill_color` == "e" ~ "red",
+      `gill_color` == "w" ~ "white",
+      `gill_color` == "y" ~ "yellow",
+      TRUE ~ "Unknown"
+    ),
+    
+    habitat = case_when(
+      habitat == "d" ~ "Florestas",
+      habitat == "w" ~ "Lixões",
+      habitat ==  "u" ~ "Cidades",
+      habitat == "p" ~ "Veredas",
+      habitat == "m" ~ "Prados",
+      habitat == "l" ~ "Folhas",
+      habitat == "g" ~ "Gramas",
+      habitat == "h" ~ "Charnecas",
+      TRUE ~'Unknown'
+    ),
+    
+    season = case_when(
+      season == 's' ~ 'spring',
+      season == 'u' ~'summer',
+      season == 'w' ~'winter',
+      season == 'a' ~'autumn',
+      TRUE ~'Unknown'
+    ),
+    stem_root = case_when(
+      stem_root == 'b' ~'bulbous',
+      stem_root == 's' ~'swollen',
+      stem_root == 'c' ~'club', 
+      stem_root == 'u' ~'cup',
+      stem_root == 'e' ~ 'equal',
+      stem_root == 'z' ~'rhizomorphs',
+      stem_root == 'r' ~'rooted',
+      TRUE ~ 'Unknown'
+      
+    ),
+    
+    stem_surface = case_when(
+      stem_surface == "n" ~ "brown",
+      stem_surface == "b" ~ "buff",
+      stem_surface == "c" ~ "cinnamon",
+      stem_surface == "g" ~ "gray",
+      stem_surface == "r" ~ "green",
+      stem_surface == "p" ~ "pink",
+      stem_surface == "u" ~ "purple",
+      stem_surface == "e" ~ "red",
+      stem_surface == "w" ~ "white",
+      stem_surface == "y" ~ "yellow",
+        TRUE ~ "Unknown"
+    ),
+    
+    
+    stem_color = case_when(
+      stem_color == "n" ~ "brown",
+      stem_color == "b" ~ "buff",
+      stem_color == "c" ~ "cinnamon",
+      stem_color == "g" ~ "gray",
+      stem_color == "r" ~ "green",
+      stem_color == "p" ~ "pink",
+      stem_color == "u" ~ "purple",
+      stem_color == "e" ~ "red",
+      stem_color == "w" ~ "white",
+      stem_color == "y" ~ "yellow",
+      TRUE ~ "Unknown"
+      
+    ),
+    
+    veil_type = case_when(
+      veil_type == 'p' ~'partial',
+      veil_type == 'u' ~'universal',
+      TRUE ~'Unknown'
+      
+    ),
+    
+    veil_color = case_when(
+      veil_color == "n" ~ "brown",
+      veil_color == "b" ~ "buff",
+      veil_color == "c" ~ "cinnamon",
+      veil_color == "g" ~ "gray",
+      veil_color == "r" ~ "green",
+      veil_color == "p" ~ "pink",
+      veil_color == "u" ~ "purple",
+      veil_color == "e" ~ "red",
+      veil_color == "w" ~ "white",
+      veil_color == "y" ~ "yellow",
+      TRUE ~ "Unknown"
+      
+    ),
+    has_ring = case_when(
+      has_ring == 't' ~'ring',
+      has_ring == 'f' ~'none'
+    ),
+    ring_type = case_when(
+      ring_type == 'c' ~ 'cobwebby',
+      ring_type == 'e' ~'evanescent',
+      ring_type == 'r' ~'flaring',
+      ring_type == 'g' ~'grooved',
+      TRUE ~ 'Unknown'
+    ),
+    spore_print_color = case_when(
+      `spore_print_color` == "k" ~ "black",
+      `spore_print_color` == "n" ~ "brown",
+      `spore_print_color` == "b" ~ "buff",
+      `spore_print_color` == "h" ~ "chocolate",
+      `spore_print_color` == "g" ~ "gray",
+      `spore_print_color` == "r" ~ "green",
+      `spore_print_color` == "o" ~ "orange",
+      `spore_print_color` == "p" ~ "pink",
+      `spore_print_color` == "u" ~ "purple",
+      `spore_print_color` == "e" ~ "red",
+      `spore_print_color` == "w" ~ "white",
+      `spore_print_color` == "y" ~ "yellow",
+      TRUE ~ 'Unknown'
+      
+    )
+    
+    
+  
+  )
+
+
+
+```
+
+## Resultados {#sec-4}
+
+Dada a importância acerca da identificação entre as classes dos cogumelos, o trabalho foca seus esforços em entender e identificar as variáveis que têm maior predisposição a serem correlacionadas a uma das classes ou à outra.
+
+No entanto, são necessárias exploração e análise prévias dos dados encontrados.
+
+O primeiro resultado a ser divulgado é a proporção existente entre cogumelos venonosos e não venenosos.
+
+```{r, warning = FALSE, echo = FALSE}
+porcentagens <- paste(round(prop.table(table(df$class))*100,2),'%', names(prop.table(table(df$class))), ' ')
+message(porcentagens)
+
+```
+
+Temos, portanto, uma ideia inicial da configuração populacional e da disposição de venenosos e comestíveis. Com isso, podemos iniciar a análise exploratória dos dados.
+
+# Análise Exploratória
+
+A seguinte análise se baseia na relação entre as classes e os habitats com as variavéis diâmetro do píleo, altura do estipé e largura do estipé, isto é, como as características físicas dos cogumelos se alteram de acordo com sua classe e origem geográfica.
+
+Começando pela relação entre diâmetro do píleo e as classes coméstivel ou venenoso, demonstrada abaixo e nos tópicos que seguem, e, na sequência, outras relações dispostas de mesmo modo:
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+## Tabela 
+diametro_pileo <- df %>%
+  group_by(df$class) %>%
+  filter(cap_diameter > 0) %>%
+  summarise(
+    média = round(mean(cap_diameter, na.rm = TRUE),2),
+    mediana = round(median(cap_diameter, na.rm = TRUE),2),
+    desvio = round(sd(cap_diameter, na.rm = TRUE),2),
+    maxímo = round(max(cap_diameter, na.rm = TRUE),2),
+    minímo = round(min(cap_diameter, na.rm = TRUE),2),
+    amplitude = round(diff(range(cap_diameter, na.rm = TRUE)),2),
+    variância = round(var(cap_diameter, na.rm = TRUE),2),
+    coeficiênte = round((sd(cap_diameter)/mean(cap_diameter)) *100,2),
+    Q1 = round(quantile(cap_diameter, 0.25),2),
+    Q2 = round(quantile(cap_diameter, 0.50),2),
+    Q3 = round(quantile(cap_diameter, 0.75),2),
+    contagem = n()
+  )
+
+
+tabela_diametro <- as.data.frame((diametro_pileo))
+print(tabela_diametro)
+```
+
+-   Média e Mediana: Os cogumelos venenosos possuem um diâmetro menor em comparação aos comestíveis
+
+-   Desvio Padrão e Variância: O desvio é maior nos comestíveis, indicando maior dispersão. A variância confirma isso.
+
+-   Amplitude: A amplitude nos comestíveis é significativamente maior (66.2) que nos venenosos (32.4), indicando que existem cogumelos comestíveis de tamanhos bem diversos.
+
+-   Coeficiente de Variação: Ambos têm valores próximos (67.3% venenosos e 61.0% comestíveis), sugerindo que a variação proporcional é semelhante.
+
+Largura do Estipé x coméstivel ou venenoso
+
+```{r, warning = FALSE, message = FALSE,echo = FALSE}
+## Tabela
+largura_estipe <- df %>%
+  group_by(df$class) %>%
+  filter(stem_width > 0) %>%
+  summarise(
+    média = round(mean(stem_width, na.rm = TRUE),2),
+    mediana = round(median(stem_width, na.rm = TRUE),2),
+    desvio = round(sd(stem_width, na.rm = TRUE),2),
+    maxímo = round(max(stem_width, na.rm = TRUE),2),
+    minímo = round(min(stem_width, na.rm = TRUE),2),
+    amplitude = round(diff(range(stem_width, na.rm = TRUE)),2),
+    variância = round(var(stem_width, na.rm = TRUE),2),
+    coeficiênte = round((sd(stem_width)/mean(stem_width)) *100,2),
+    Q1 = round(quantile(stem_width, 0.25),2),
+    Q2 = round(quantile(stem_width, 0.50),2),
+    Q3 = round(quantile(stem_width, 0.75),2),
+    contagem = n()
+  )
+
+
+tabela_largura <- as.data.frame((largura_estipe))
+
+
+print(tabela_largura)
+```
+
+Vemos que:
+
+Média e Mediana: os cogumelos comestíveis possuem largura maior que os venenosos.
+
+Desvio Padrão e Variância: ambas as medidas são maiores nos comestíveis, indicando maior dispersão na largura.
+
+Amplitude: há um valor mínimo negativo (-2.75) nos comestíveis, que pode indicar um erro nos dados ou algo do tipo
+
+Coeficiente de Variação: próximos entre si (76.6% comestíveis, 76.5% venenosos), mostrando similaridade proporcional na variação.
+
+Altura do estipé x coméstivel ou venenoso:
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+## Tabela
+altura_estipe <- df %>%
+  group_by(df$class) %>%
+  filter(stem_height > 0) %>%
+  summarise(
+    média = round(mean(stem_height, na.rm = TRUE), 2),
+    mediana = round(median(stem_height, na.rm = TRUE), 2),
+    desvio = round(sd(stem_height, na.rm = TRUE), 2),
+    máximo = round(max(stem_height, na.rm = TRUE), 2),
+    mínimo = round(min(stem_height, na.rm = TRUE), 2),
+    amplitude = round(diff(range(stem_height, na.rm = TRUE)), 2),
+    variância = round(var(stem_height, na.rm = TRUE), 2),
+    coeficiente = round((sd(stem_height) / mean(stem_height)) * 100, 2),
+    Q1 = round(quantile(stem_height, 0.25), 2),
+    Q2 = round(quantile(stem_height, 0.50), 2),
+    Q3 = round(quantile(stem_height, 0.75), 2),
+    contagem = n()
+  )
+
+# Gerar a tabela formatada com kable
+tabela_altura <- as.data.frame((altura_estipe))
+print(tabela_altura)
+
+```
+
+-   Média e Mediana: os cogumelos comestíveis têm altura média e mediana maiores que os venenosos.
+
+-   Desvio Padrão: a variação (desvio) é um pouco maior nos venenosos, indicando maior dispersão nas alturas.
+
+-   Amplitude: a diferença entre o valor máximo e mínimo é mais alta nos venenosos, reforçando a maior dispersão.
+
+-   Coeficiente de Variação: o valor de 50.5% nos venenosos indica que, a variação da altura em relação à média é maior comparado aos comestíveis (51%).
+
+-   Frequência: o número de amostras dos venenosos é maior que o dos comestíveis.
+
+Comentários Gerais:
+
+Cogumelos comestíveis têm, em geral, valores médios e medianos maiores em todas as métricas analisadas (altura, largura e diâmetro).
+
+Os venenosos mostram menos dispersão e amplitude, mas proporcionalmente (coeficiente de variação), a diferença não é tão acentuada.
+
+O valor negativo na largura do estipe nos comestíveis indica um possível problema nos dados, que precisaria ser revisado.
+
+As diferenças nos dados podem ser úteis para criar classificadores entre cogumelos comestíveis e venenosos.
+
+Agora vamos analisar habitat x as 3 variáveis:
+
+Começando pelo Diâmetro do Píleo x habitat
+
+```{r, warning = FALSE, echo = FALSE, message = FALSE}
+## Tabela 
+diametro_habitat <- df %>%
+  group_by(df$habitat) %>%
+  filter(cap_diameter > 0) %>%
+  summarise(
+    média = round(mean(cap_diameter, na.rm = TRUE),2),
+    mediana = round(median(cap_diameter, na.rm = TRUE),2),
+    desvio = round(sd(cap_diameter, na.rm = TRUE),2),
+    maxímo = round(max(cap_diameter, na.rm = TRUE),2),
+    minímo = round(min(cap_diameter, na.rm = TRUE),2),
+    amplitude = round(diff(range(cap_diameter, na.rm = TRUE)),2),
+    variância = round(var(cap_diameter, na.rm = TRUE),2),
+    coeficiênte = round((sd(cap_diameter)/mean(cap_diameter)) *100,2),
+    Q1 = round(quantile(cap_diameter, 0.25),2),
+    Q2 = round(quantile(cap_diameter, 0.50),2),
+    Q3 = round(quantile(cap_diameter, 0.75),2),
+    contagem = n()
+  )
+
+
+tabela_dh <- as.data.frame((diametro_habitat))
+print(tabela_dh)
+
+```
+
+Observações por habitat
+
+1.  Charnecas:
+
+    -   Média e Mediana: A largura média (6.98) e mediana (5.68) são próximas, indicando uma distribuição relativamente simétrica.
+
+    -   Desvio Padrão e Amplitude: Alta amplitude (20.83) e desvio (5.10), indicam uma grande variação dentro desse habitat.
+
+    -   Coeficiente de Variação: 73.13%, mostrando que a dispersão relativa é alta em relação à média.
+
+2.  Cidades:
+
+    -   Média e Mediana: Muito próximas (12.47 e 12.48), indicando uma distribuição bem equilibrada.
+
+    -   Desvio Padrão e Amplitude: Baixa variação, com desvio de 0.84 e amplitude de apenas 5.18.
+
+    -   Coeficiente de Variação: Extremamente baixo (6.75%), confirmando que os dados são muito homogêneos.
+
+3.  Florestas:
+
+    -   Média e Mediana: Diferença notável entre média (13.81) e mediana (12.21), indicando uma possível assimetria.
+
+    -   Desvio Padrão e Amplitude: Desvio alto (10.29) e amplitude muito grande (105.06), sugerindo outliers ou grande variabilidade.
+
+    -   Coeficiente de Variação: 74.55%, alta dispersão relativa.
+
+4.  Folhas:
+
+    -   Média e Mediana: Diferença marcante entre média (12.41) e mediana (8.93), apontando para uma distribuição assimétrica.
+
+    -   Desvio Padrão e Amplitude: Desvio muito alto (12.02) e amplitude grande (80.95), reforçando a ideia de alta variabilidade.
+
+    -   Coeficiente de Variação: 96.91%, maior dispersão relativa entre os habitats.
+
+5.  Gramas:
+
+    -   Média e Mediana: Valores próximos (6.72 e 5.60), indicando um padrão mais equilibrado.
+
+    -   Desvio Padrão e Amplitude: Amplitude considerável (29.47) e desvio de 5.20.
+
+    -   Coeficiente de Variação: 77.42%, confirmando alta dispersão proporcional.
+
+6.  Lixões:
+
+    -   Média e Mediana: Quase idênticas (12.50 e 12.49), sugerindo uma distribuição muito simétrica.
+
+    -   Desvio Padrão e Amplitude: Baixa dispersão (desvio de 0.84 e amplitude de 6.69).
+
+    -   Coeficiente de Variação: Extremamente baixo (6.73%), semelhante às cidades.
+
+7.  Prados:
+
+    -   Média e Mediana: Diferença visível entre média (9.60) e mediana (6.56), sugerindo assimetria.
+
+    -   Desvio Padrão e Amplitude: Alta amplitude (39.37) e desvio (7.62), reforçando a variabilidade.
+
+    -   Coeficiente de Variação: 79.41%, alta dispersão proporcional.
+
+8.  Veredas:
+
+    -   Média e Mediana: Grande discrepância (16.67 média e 3.98 mediana), indicando uma distribuição altamente assimétrica.
+
+    -   Desvio e Amplitude: Altos valores de desvio (13.41) e amplitude (38.61).
+
+    -   Coeficiente de Variação: 80.42%, muito alta, dispersão relativa.
+
+Conclusões:
+
+1.  Cidades e lixões possuem os dados mais homogêneos, com baixa variabilidade e coeficientes de variação abaixo de 7%.
+
+2.  Florestas, folhas, prados e veredas apresentam maior dispersão, com altas amplitudes, desvios padrões e coeficientes de variação acima de 70%.
+
+3.  A grande diferença entre média e mediana em alguns habitats (ex.: veredas, folhas) indica possíveis outliers ou distribuições muito assimétricas.
+
+Largura do Estipé x habitat
+
+```{r, message = FALSE, echo = FALSE, warning = FALSE}
+## Tabela
+altura_hahitat <- df %>%
+  group_by(df$habitat) %>%
+  filter(stem_height > 0) %>%
+  summarise(
+    média = round(mean(stem_height, na.rm = TRUE),2),
+    mediana = round(median(stem_height, na.rm = TRUE),2),
+    desvio = round(sd(stem_height, na.rm = TRUE),2),
+    maxímo = round(max(stem_height, na.rm = TRUE),2),
+    minímo = round(min(stem_height, na.rm = TRUE),2),
+    amplitude = round(diff(range(stem_height, na.rm = TRUE)),2),
+    variância = round(var(stem_height, na.rm = TRUE),2),
+    coeficiênte = round((sd(stem_height)/mean(stem_height)) *100,2),
+    Q1 = round(quantile(stem_height, 0.25),2),
+    Q2 = round(quantile(stem_height, 0.50),2),
+    Q3 = round(quantile(stem_height, 0.75),2),
+    contagem = n()
+  )
+
+
+tabela_ah <- as.data.frame(t(altura_hahitat ))
+print(tabela_ah)
+
+```
+
+Observações por Habitat:
+
+1.  Charnecas:
+
+    -   Média e Mediana: Diferença considerável (média 4.92, mediana 3.56), indicando uma distribuição assimétrica.
+
+    -   Desvio Padrão e Amplitude: Desvio elevado (3.53) e ampla variação (amplitude de 15.52).
+
+    -   Coeficiente de Variação: 71.65%, alta dispersão proporcional em relação à média.
+
+2.  Cidades:
+
+    -   Média e Mediana: Muito próximas (média 9.99, mediana 10.00), sugerindo uma distribuição bem equilibrada.
+
+    -   Desvio Padrão e Amplitude: Baixa dispersão (desvio 1.64 e amplitude 10.56).
+
+    -   Coeficiente de Variação: 16.41%, indicando grande homogeneidade.
+
+3.  Florestas:
+
+    -   Média e Mediana: A média (7.40) é ligeiramente maior que a mediana (6.58), sugerindo uma leve assimetria.
+
+    -   Desvio Padrão e Amplitude: Desvio alto (5.62) e amplitude expressiva (66.25), indicando grande variação nos dados.
+
+    -   Coeficiente de Variação: 75.97%, reforçando a alta dispersão relativa.
+
+4.  Folhas:
+
+    -   Média e Mediana: Diferença pequena entre média (5.80) e mediana (5.07), indicando distribuição razoavelmente simétrica.
+
+    -   Desvio Padrão e Amplitude: Amplitude de 19.57 e desvio de 3.60, sugerindo variação moderada.
+
+    -   Coeficiente de Variação: 62.01%, indicando variação proporcional significativa.
+
+5.  Gramas:
+
+    -   Média e Mediana: A média (4.33) é ligeiramente maior que a mediana (3.52), sugerindo leve assimetria.
+
+    -   Desvio Padrão e Amplitude: Desvio de 3.02 e amplitude de 20.22, indicando variação considerável.
+
+    -   Coeficiente de Variação: 69.79%, alta dispersão relativa.
+
+6.  Lixões:
+
+    -   Média e Mediana: Muito próximas (média 6.51, mediana 6.51), mostrando uma distribuição bem equilibrada.
+
+    -   Desvio Padrão e Amplitude: Baixa variação (desvio 1.16 e amplitude 9.10).
+
+    -   Coeficiente de Variação: 17.81%, confirmando a homogeneidade nos dados.
+
+7.  Prados:
+
+    -   Média e Mediana: Diferença significativa (média 5.79, mediana 3.96), indicando uma distribuição assimétrica.
+
+    -   Desvio Padrão e Amplitude: Alto desvio (4.59) e amplitude expressiva (26.10).
+
+    -   Coeficiente de Variação: 79.38%, maior dispersão proporcional entre os habitats.
+
+8.  Veredas:
+
+    -   Média e Mediana: Valores próximos (média 3.25, mediana 3.15), indicando simetria.
+
+    -   Desvio Padrão e Amplitude: Baixa variação (desvio 0.94 e amplitude 5.16).
+
+    -   Coeficiente de Variação: 29.04%, indicando relativa homogeneidade.
+
+Conclusões:
+
+1.  Cidades e lixões possuem os dados mais homogêneos, com coeficientes de variação baixos (16.41% e 17.81%, respectivamente).
+
+2.  Prados, florestas e charnecas apresentam alta dispersão relativa, com coeficientes acima de 70%.
+
+3.  A grande amplitude nas florestas (66.25) pode ser um indicativo de outliers ou grande diversidade nos cogumelos desse habitat.
+
+4.  Veredas têm os dados mais uniformes, com o menor desvio padrão (0.94) e amplitude relativamente pequena.
+
+Altura do Estipé x habitat
+
+```{r,message = FALSE, echo = FALSE, warning = FALSE}
+## Tabela
+altura_hahitat <- df %>%
+  group_by(df$habitat) %>%
+  filter(stem_height > 0) %>%
+  summarise(
+    média = round(mean(stem_height, na.rm = TRUE),2),
+    mediana = round(median(stem_height, na.rm = TRUE),2),
+    desvio = round(sd(stem_height, na.rm = TRUE),2),
+    maxímo = round(max(stem_height, na.rm = TRUE),2),
+    minímo = round(min(stem_height, na.rm = TRUE),2),
+    amplitude = round(diff(range(stem_height, na.rm = TRUE)),2),
+    variância = round(var(stem_height, na.rm = TRUE),2),
+    coeficiênte = round((sd(stem_height)/mean(stem_height)) *100,2),
+    Q1 = round(quantile(stem_height, 0.25),2),
+    Q2 = round(quantile(stem_height, 0.50),2),
+    Q3 = round(quantile(stem_height, 0.75),2),
+    contagem = n()
+  )
+
+tabela_ah <- as.data.frame(t(altura_hahitat ))
+print(tabela_ah)
+
+
+```
+
+Observações por Habitat:
+
+1.  Charnecas:
+
+    -   Média e Mediana: Valores próximos (média 5.79, mediana 5.51), indicando boa simetria.
+
+    -   Desvio Padrão e Amplitude: Moderada variação (desvio 2.62 e amplitude 15.03).
+
+    -   Coeficiente de Variação: 45.23%, indicando dispersão relativa considerável.
+
+2.  Cidades:
+
+    -   Média e Mediana: Muito próximas (média 18.88, mediana 18.86), o que sugere uma distribuição equilibrada.
+
+    -   Desvio Padrão e Amplitude: Alto desvio padrão (3.62) e ampla amplitude (26.69), mas os dados ainda são relativamente homogêneos.
+
+    -   Coeficiente de Variação: 19.19%, menor dispersão relativa entre os habitats.
+
+3.  Florestas:
+
+    -   Média e Mediana: Média (6.87) um pouco maior que a mediana (6.14), sugerindo leve assimetria positiva.
+
+    -   Desvio padrão e Amplitude: Alto desvio padrão (3.28) e grande amplitude (35.14).
+
+    -   Coeficiente de Variação: 47.72%, indicando dispersão significativa.
+
+4.  Folhas:
+
+    -   Média e Mediana: Valores muito próximos (média 6.23, mediana 6.10), indicando simetria nos dados.
+
+    -   Desvio Padrão e Amplitude: Moderada variação (desvio 1.63 e amplitude 11.02).
+
+    -   Coeficiente de Variação: 26.16%, relativamente homogêneo.
+
+5.  Gramas:
+
+    -   Média e Mediana: Diferença pequena (média 6.08, mediana 5.40), o que sugere leve assimetria.
+
+    -   Desvio Padrão e Amplitude: Grande amplitude (30.06) e desvio padrão de 2.72.
+
+    -   Coeficiente de Variação: 44.71%, indicando dispersão proporcional significativa.
+
+6.  Lixões:
+
+    -   Média e Mediana: Praticamente iguais (média 4.50, mediana 4.50), evidenciando simetria perfeita.
+
+    -   Desvio padrão e Amplitude: Muito baixa variação (desvio 0.50 e amplitude 4.16).
+
+    -   Coeficiente de Variação: 11.02%, menor dispersão relativa.
+
+7.  Prados:
+
+    -   Média e Mediana: Diferença considerável (média 7.08, mediana 5.87), indicando forte assimetria positiva.
+
+    -   Desvio Padrão e Amplitude: Grande desvio (4.99) e amplitude expressiva (34.74).
+
+    -   Coeficiente de Variação: 70.58%, maior dispersão relativa entre os habitats.
+
+8.  Veredas:
+
+    -   Média e Mediana: Valores próximos (média 4.50, mediana 4.48), mostrando boa simetria.
+
+    -   Desvio Padrão e Amplitude: Baixa variação (desvio 1.11 e amplitude 5.50).
+
+    -   Coeficiente de Variação: 24.58%, indicando moderada homogeneidade.
+
+Iniciaremos o trabalho de distribuição das variáveis pelos registros quantitativos, desses, inciamos pelo diâmetro de capa (*cap_diameter*).
+
+```{r, warning = FALSE, echo = FALSE}
+
+
+edible <- df %>% filter(class == 'Comestível')
+poisonous <- df %>% filter(class == 'Venenoso')
+
+# Calculando a média dos diâmetros.
+
+message(paste("A média do diâmetro de capa dos cogumelos comestíveis é: ",round(mean(edible$cap_diameter),2)) ," cm","\n Já dos cogumelos venenosos é: ",
+round(mean(poisonous$cap_diameter),2)," cm" ,"\n A diferença % das médias é de: ",
+round(((round(mean(edible$cap_diameter),2)/round(mean(poisonous$cap_diameter),2)) -1 )*100,2), "%")
+
+
+
+```
+
+A média do diâmetro das capas dos cogumelos comestíveis é 32,65% maior. Porém, faz-se necessária a avaliação da distribuição de frequência dos tamanhos de capa para ambas as categorias. Como demonstra o gráfico a seguir.
+
+```{r, warning = FALSE, echo = FALSE}
+ggplot(data = df , aes(x= cap_diameter,fill = class))+geom_density(alpha = 0.5) + ylab("Frequência")+
+  xlab("Diâmetro da capa") + theme_classic() +labs(fill = "Classe")
+```
+
+Percebe-se que as distribuições são similares. Logo, não é uma variável interessante para ser utilizada na distinção entre cogumelos venenosos ou não. É perceptível que há uma grande área em que as duas distribuições se sobrepõem.
+
+O mesmo procedimento de avaliação foi realizado para as outras variáveis numéricas, altura do caule (*stem_height)* e grossura do caule (*stem_width)*. Como podem ser visualizados os gráficos abaixo
+
+```{r, echo = FALSE, warning = FALSE}
+ggplot(data = df , aes(x= stem_height,fill = class))+geom_density(alpha = 0.5) + ylab("Frequência")+
+  xlab("Altura do Caule") + theme_classic() +labs(fill = "Classe", title = "Frequência altura do caule")
+```
+
+```{r, echo = FALSE, warning=  FALSE}
+ggplot(data = df , aes(x= stem_width,fill = class))+geom_density(alpha = 0.5) + ylab("Frequência")+
+  xlab("Grossura do Caule") + theme_classic() +labs(fill = "Classe",title = "Frequência grossura do caule")
+
+```
+
+Das variáveis observadas, nenhuma se apresenta como tendo uma distinção perceptível nas distribuições entre cogumelos venenosos e comestíveis.
+
+Segundo o micologista Hubert Voiry (2022), o outono é a estação do cogumelo, pois a umidade é extremamente necessária para sua proliferação, fazendo as chuvas outonais um ótimo momento para o seu crescimento. Esse fato é refletido em nossos dados, como podemos observar no seguinte gráfico, que também considera a análise condutora deste trabalho, se os cogumelos são comestíveis ou não: 
+
+```{r, warning = FALSE, echo = FALSE}
+
+graf1 <- ggplot(df |> filter(!is.na(season), !is.na(class)), 
+                aes(x = factor(season), fill = factor(class))) + 
+  geom_bar(stat = "count", position = "stack", width = 0.7) +  
+  labs(title = "Cogumelos comestíveis e venenosos em diferentes estações do ano",
+       x = "Estações do Ano",        
+       y = "Quantidade", 
+       fill = "") + 
+  scale_fill_manual(values = c("Comestível" = "lightblue", "Venenoso" = "pink"),
+                    labels = c("Comestível", "Venenoso")) + 
+  theme_minimal() +               
+  scale_x_discrete(labels = c("summer" = "Verão", 
+                              "autumn" = "Outono", 
+                              "winter" = "Inverno", 
+                              "spring" = "Primavera")) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = " ") 
+  )
+print(graf1)
+```
+
+Voiry também menciona a existência de cogumelos em diferentes habitats, estando eles em todos os lugares. O micologista expressa a importância dos cogumelos em florestas, como a própria tradução do título do seu livro sugere "Não há florestas sem cogumelo". Existe uma importante simbiose entre árvores e fungos, sem a qual, nenhum dos dois existiria. A árvore fornece açúcares e o fungo, água e sais minerais. Conseguimos enxergar em nossos dados a diversidade de lugares em que os cogumelos podem se proliferar, mas, é na floresta que se encontra uma maior diversidade:
+
+```{r, WARNING = FALSE, echo = FALSE}
+
+graf2 <- ggplot(df, aes(x = factor(habitat), fill = factor(class))) + 
+  geom_bar(position = "dodge") +  
+  labs(title = "Cogumelos comestíveis e venenosos em diferentes Habitats", 
+       x = "Habitat", 
+       y = "Quantidade", 
+       fill = "") + 
+  scale_fill_manual(values = c("Comestível" = "lightblue", "Venenoso" = "pink"), 
+                    labels = c("Comestível", "Venenoso")) +
+  theme_minimal() + 
+  scale_x_discrete(labels = c("d" = "Florestas", "w" = "Lixões", "u" = "Cidades", "p" = "Veredas", "m" = "Prados", "l" = "Folhas", "g" = "Gramas", "h" = "Charnecas")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +  
+  scale_y_continuous(labels = scales::label_number(big.mark = " "))
+print(graf2)
+```
+
+Conforme é possível observar nos dois gráficos apresentados anteriormente, a distribuição de cogumelos comestíveis e venenosos apresenta grande semelhança, tanto em relação às estações do ano em que mais proliferam, quanto aos habitats em que estão presentes. Assim, nenhuma dessas duas variáveis se mostra relevante para diferenciar cogumelos comestíveis de venenosos.
+
+Ainda na busca por formas práticas de identificar se um cogumelo é comestível ou não, analisamos o formato do píleo (chapéu) e suas proporções em relação às categorias de cogumelos comestíveis e venenosos, considerando que, visualmente, essa é uma das maneiras mais simples de distinguir um cogumelo.
+
+```{r, WARNING = FALSE, echo = FALSE}
+
+
+graf3 <- df |>
+  filter(!is.na(`cap_shape`), !is.na(class)) |> 
+  ggplot(mapping = aes(x = factor(`cap_shape`), fill = class)) + 
+  geom_bar(stat = "count", position = "stack", width = 0.7) +  
+  labs(title = "Distribuição de Cogumelos por Formato do Píleo e Toxicidade",
+       x = "Formato do Píleo",        
+       y = "Quantidade", 
+       fill = "") + 
+  scale_fill_manual(values = c("Comestível" = "pink", "Venenoso" = "lightblue"),
+                    labels = c("Comestível" = "Comestível", "Venenoso" = "Venenoso")) + 
+  theme_minimal() +               
+  scale_x_discrete(labels = c("b" = "Campanulado", "c" = "Cônico", "x" = "Convexo", "f" = "Plano", "o" = "Umbonado", "s" = "Umbilicado", "p" = "Afundado")) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 10),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = " ") 
+  )
+graf3
+
+```
+
+Analisando o gráfico acima, observa-se que os cogumelos com píleo campanulado, cônico e umbonado são, predominantemente, venenosos. Contudo, entre os demais tipos de píleo, a proporção entre cogumelos venenosos e comestíveis é bastante semelhante, o que torna inadequado identificá-los com o uso exclusivo dessa variável.
+
+![Mushrooms Cap Shapes. Fonte: https://www.mushroomdiary.co.uk/mushroom-identification/](https://i0.wp.com/www.mushroomdiary.co.uk/wp-content/uploads/2011/08/cap-shapes.gif)
+
+## Distribuição de cores
+
+Olhando para o aspecto visual da análise, e a motivo de exemplificação, listamos abaixo algumas contagens de frequência de cores por cada parte dos cogumelos que apresentam coloração. Seguindo a direção da análise, as frequências são divididas de acordo com as classes dos cogumelos.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+
+#agrupando e criando amostra
+amostra_veneno <- df %>% sample_n(15000)
+cor_chapéu <- amostra_veneno %>%
+  group_by(class, cap_color) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  mutate(proportions = count/ sum(count))
+
+
+##Distribuição de cores do chapéu por classe
+
+g1 <- ggplot(cor_chapéu, aes(x = cap_color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "Comestível" = "#ffcc80",
+      "Venenoso" = "#388e3c"
+    )
+  ) +
+  labs(
+    title = "Frequência de cores do chapéu por classe",
+    x = "Classe",
+    y = "Frequência",
+    fill = "Classe"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g1
+
+##Distribuição de cores do himênio por classe
+cor_himenio <- amostra_veneno %>%
+  group_by(class, gill_color) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  mutate(proportions = count/ sum(count))
+
+
+
+g2 <- ggplot(cor_himenio, aes(x = gill_color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "Comestível" = "#ffcc80",
+      "Venenoso" = "#388e3c"
+    )
+  ) +
+  labs(
+    title = "Frequência de cores do himênio por classe",
+    x = "Classe",
+    y = "Frequência",
+    fill = "Classe"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g2
+
+##Distribuição de cores do véu por classe
+cor_véu <- amostra_veneno %>%
+  group_by(class, veil_color) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  mutate(proportions = count/ sum(count))
+
+
+
+g3 <- ggplot(cor_véu, aes(x = veil_color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "Comestível" = "#ffcc80",
+      "Venenoso" = "#388e3c"
+    )
+  ) +
+  labs(
+    title = "Frequência de cores do véu por classe",
+    x = "Classe",
+    y = "Frequência",
+    fill = "Classe"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g3
+
+##Distribuição de cores do estipe por classe
+cor_estipe <- amostra_veneno %>%
+  group_by(class, stem_color) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  mutate(proportions = count/ sum(count))
+
+
+
+g4 <- ggplot(cor_estipe, aes(x = stem_color, y = count, fill = class)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(
+    values = c(
+      "Comestível" = "#ffcc80",
+      "Venenoso" = "#388e3c"
+    )
+  ) +
+  labs(
+    title = "Frequência de cores do estipe por classe",
+    x = "Classe",
+    y = "Frequência",
+    fill = "Classe"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g4
+
+## Gráficos facetados
+grid.arrange(
+  arrangeGrob(
+    g1, g2, g3, g4, ncol = 2,
+    top = textGrob("As quatro distribuições de cores", gp = gpar(fontsize = 16, fontface = "bold"))
+  ))
+```
+
+Olhando para as frequências de de coloração dos chapéus, nota-se que não há diferenças de coloração que saltem aos olhos do leitor. Contudo, nota-se, em um segundo momento, como há disparidade de frequência para as cores menos comuns, justamente as mais coloridas: verde, roxo, vermelho e rosa, todas mais vistas em cogumelos venenosos.
+
+Para as cores do himênio, contudo, a mesma relação não se aplica. Aqui, a grande disparidade entre as frequências está na coloração marrom. Esta também é mais frequente para os cogumelos venenosos na coloração do estipe, mas a relação não é exatamente a mesma, no estipe há frequência menor de cores chamativas, mais frequentes no himênio. Por último, citamos as colorações do véu, ainda que não haja muita análise a ser feita, pois, a grande maioria é listada como desconhecida. No mais, a pouca frequência de cores chamativas é ligada aos cogumelos venenosos.
+
+De modo geral, as cores mais frequentes para as partes dos cogumelos são as menos chamativas: marrom e branco. As cores vermelha, amarela e brance podem, também, ter frequência maior, a depender da parte do cogumelo. As mais chamativas, por outro lado, são menos frequentes, mas são mais ligadas aos cogumelos venenosos e mais presentes no chapéu e no himênio.
+
+## Correlação entre as distribuições
+
+É perceptível, portanto, como algumas colorações são mais frequentes para determinados tipos de cogumelos. Contudo, quando uma parte tem uma cor as outras têm também a mesma coloração? Para que se possa visualizar melhor este movimento, cabem algum teste de correlação. É pertinente dizer que o foi feito abaixo não é relativo a um teste de qui-quadrado ou de um coeficiente de Cramér, mas apenas uma análise exploratória que se utiliza do coeficiente de Pearson.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+##Correlação entre as distribuições
+amostra_veneno_num <- amostra_veneno %>%
+  mutate(across(c(cap_color, gill_color, veil_color, stem_color), 
+                ~ as.numeric(factor(.))))
+
+correlacao_por_classe <- amostra_veneno_num %>%
+  select(cap_color, gill_color, veil_color, stem_color, class) %>%  # Selecionar as colunas de interesse
+  group_by(class) %>%  # Agrupar por 'class'
+  summarise(
+    cor = list(cor(across(c(cap_color, gill_color, veil_color, stem_color)))),  # Calcular a correlação para as colunas selecionadas
+    .groups = "drop"
+  )
+
+cor_edible <- correlacao_por_classe$cor[[1]]
+
+# visualizando a correlação
+
+cor_poisonous <- correlacao_por_classe$cor[[2]]
+
+cor_edible_melt <- melt(cor_edible)
+cor_poisonous_melt <- melt(cor_poisonous)
+
+##adicionando coluna para classe
+cor_edible_melt$class <- "Comestível"
+cor_poisonous_melt$class <- "Venenoso"
+combined_cor <- rbind(cor_edible_melt, cor_poisonous_melt) ##união
+g5 <- ggplot(combined_cor, aes(Var1, Var2, fill = value)) + #gráfico
+  geom_tile() +
+  facet_wrap(~ class) +  
+  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  # escala de cor
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  labels
+  labs(title = "Matriz de Correlação: Comestível vs Venenoso", x = "Variável", y = "Variável") +
+  coord_fixed(ratio = 1)
+
+g5
+```
+
+```{r, echo = FALSE, warning=FALSE, message = FALSE}
+# Excluindo a diagonal
+cor_cores_filtrado <- combined_cor %>%
+  filter(Var1 != Var2)
+
+# Gráfico sem a diagonal
+g5_filtrado <- ggplot(cor_cores_filtrado, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  facet_wrap(~ class) +  # Facet by class
+  scale_fill_gradient2(midpoint = 0, low = "#ef9a9a", high = "#b71c1c", mid = "white") +  # Color scale
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate axis labels
+  labs(
+    title = "Matrizes de correlação (sem diagonal): Comestível vs Venenoso",
+    x = "Variável",
+    y = "Variável"
+  ) +
+  coord_fixed(ratio = 1)
+
+g5_filtrado
+
+```
+
+Pode-se ver como as matrizes demonstram como as frequências são muito distintas para as duas classes analisadas. Para os cogumelos venenosos estipe, himênio e véu estão muitas vezes relacionadas, o que não é da coloração do chapéu, por outro lado. Quanto aos cogumelos comestíveis, por outro lado, as correlações são menos fortes, mas apresentam sintonia maior entre coloração do estipo e do chapéu, ainda que baixa.
+
+# Considerações Finais
+
+A análise realizada neste trabalho permite compreender de diferentes formas a diversidade de cogumelos, que estão presentes no mundo inteiro. Observa-se como características anatômicas e morfológicas se relacionam com o fato de o cogumelo ser venenoso ou não, contribuindo para uma melhor compreensão sobre as variedades de cogumelos.  
+
+Mesmo com todas as diferentes análises, ainda é muito arriscado afirmar se um cogumelo é comestível ou não baseado-se apenas em aspectos visuais. No entanto, ampliando ainda mais o banco de dados e usando diferentes variáveis, existe um potencial de desenvolvimento de algoritmos preditivos utilizando técnicas de machine learning para prever e descrever com maior precisão a comestibilidade dos cogumelos. Com essa abordagem, seria possível garantir uma maior segurança na identificação, reduzindo riscos associados à ingestão de espécies potencialmente tóxicas.  
+
+# Referências
+
+DRECHSLER, E. R. S. *Material complementar ao livro Sistemática Vegetal I: Fungos*. Florianópolis, 2015
+
+G.H. Lincoff . *International Journal of Image, Graphics and Signal Processing*, \[S.l.\], v. 11, n. 4, p. 04-2019. Disponível em: <https://www.mecs-press.org/ijigsp/ijigsp-v11-n4/IJIGSP-V11-N4-5.pdf>. Acesso em: 24 nov. 2024.
+
+MAGALHÃES, M. N.; LIMA, A. C. P. *Noções de Probabilidade e Estatística*. São Paulo: EDUSP, 2015 (7ª edição).
+
+OJHA, Subhashish; CHOWDHURY, Dilip Roy. *An empirical study on mushroom disease diagnosis: a data mining approach*. January 2017. Disponível em: <https://www.researchgate.net/publication/312938093_An_Empirical_Study_on_Mushroom_Disease_Diagnosis_A_Data_Mining_Approach> Acesso em: 24 nov. 2024.
+
+VOIRY, Hubert. *Pas de forêt sans champignons*. 1. ed. Paris: Éditions Actes Sud, 2022.
+
+WHITAKER, R. *Communities and Ecosystems*. Nova Iorque: Macmillan, 1970.
