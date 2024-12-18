@@ -161,6 +161,8 @@ space_ratio_mean <- dados_unidos %>%
 
 print(space_ratio_mean)
 
+library(data.table)
+library(dplyr)
 ## Refugiados
 Nome_do_arquivo <- "Dados/refugiados.csv.gz"
 temp_dir <- tempdir()
@@ -185,3 +187,75 @@ refugiados_juntos <- refugiados_novo %>%
   left_join(refugiados_pais, by = c("id_origem" = "id"), suffix = c("id_origem", "id_destino"))
 
 View(refugiados_juntos)
+
+
+#1) Média de refugiados por país
+refugiados[, .(average = mean(refugiados)), by = "id_origem"]
+
+refugiados %>%
+  group_by(id_origem) %>%
+  summarize(mean(refugiados))
+
+#2) Média de refugiados saindo do Afeganistão
+refugiados %>%
+  filter(id_origem == "AFG") %>%
+  group_by(id_origem) %>%
+  summarize(mean(refugiados))
+#e em 1990?
+refugiados %>%
+  filter(id_origem == "AFG", ano == "1990")%>%
+  group_by(id_origem) %>%
+  summarize(mean(refugiados))
+# E a partir de 2000?
+refugiados %>%
+  filter(id_origem == "AFG", ano > "1999")%>%
+  group_by(id_origem) %>%
+  summarize(mean(refugiados))
+
+#3)matriz de migração intercontinental (de -> para) de refugiados do ano 2005
+refugiados_2005 <- refugiados %>%
+  filter(ano == 2005)
+
+refugiados_2005 <- refugiados_2005 %>%
+  left_join(refugiados_pais, by = c("id_origem" = "id")) %>%
+  rename(origem = nome) %>%
+  left_join(refugiados_pais, by = c("id_destino" = "id")) %>%
+  rename(destino = nome)
+
+matriz_migração <- refugiados_2005 %>%
+  group_by(origem, destino) %>%
+  summarize(total_refugiados = sum(refugiados, na.rm=TRUE)) %>%
+  tidyr::pivot_wider(names_from = destino, values_from = total_refugiados, values_fill = 0)
+
+print(matriz_migração)
+View(matriz_migração)
+
+#4) Qual país mais recebeu refugiados a partir de 2005?
+refugiados %>%
+  filter(ano == 2005) %>%
+  group_by(id_destino) %>%
+  summarize(total_Ref = sum(refugiados, na.rm = TRUE)) %>%
+  arrange(desc(total_Ref)) %>%
+  slice(1)
+
+refugiados %>%
+  filter(ano == 2010) %>%
+  group_by(id_destino) %>%
+  summarize(total_Ref = sum(refugiados, na.rm = TRUE)) %>%
+  arrange(desc(total_Ref)) %>%
+  slice(1)
+
+#5) Quantos refugiados os 3 países que mais receberam refugiados em 2010 receberam em 2005?
+top3_2010 <- refugiados %>%
+  filter(ano == 2010) %>%
+  group_by(id_destino) %>%
+  summarize(total_Ref = sum(refugiados, na.rm = TRUE)) %>%
+  arrange(desc(total_Ref)) %>%
+  slice(1:3)
+
+top3_2010_em_2005 <- refugiados %>%
+  filter(ano == 2005, id_destino %in% top3_2010) %>%
+  group_by(id_destino) %>%
+  summarize(total_Ref_2005 = sum(refugiados, na.rm = TRUE)) %>%
+  left_join(refugiados_pais, by = c("id_destino" = "id"))
+view(top3_2010_em_2005)
